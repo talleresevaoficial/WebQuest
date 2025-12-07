@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebQuest: Viajeros del Texto</title>
+    <!-- Importamos Tailwind CSS para el diseño -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Importamos una fuente divertida para niños (Fredoka) -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Iconos de Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background-color: #f0f9ff;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23bae6fd' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .section-card {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .section-card.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .nav-btn {
+            transition: all 0.3s ease;
+        }
+        .nav-btn:hover, .nav-btn.active {
+            transform: scale(1.05);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .paper-shadow {
+            box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.1);
+            border: 2px solid #e5e7eb;
+        }
+    </style>
+</head>
+<body class="text-gray-700 min-h-screen flex flex-col">
+
+    <!-- Encabezado / Header -->
+    <header class="bg-sky-500 text-white p-6 text-center border-b-4 border-sky-600 shadow-lg relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
+            <!-- Decoración de fondo simple -->
+            <div class="absolute top-2 left-10 text-6xl">🌍</div>
+            <div class="absolute bottom-2 right-10 text-6xl">✈️</div>
+        </div>
+        <div class="relative z-10 container mx-auto">
+            <h1 class="text-4xl md:text-5xl font-bold mb-2 text-yellow-300 drop-shadow-md">Viajeros del Texto</h1>
+            <p class="text-xl md:text-2xl font-light">¡Una aventura para explorar el mundo leyendo!</p>
+            <div class="mt-2 text-sm opacity-90 font-mono bg-sky-600 inline-block px-3 py-1 rounded-full">
+                Nivel: 3er Grado
+            </div>
+        </div>
+    </header>
+
+    <!-- Navegación -->
+    <nav class="bg-white sticky top-0 z-50 shadow-md border-b-2 border-gray-100">
+        <div class="container mx-auto px-4 overflow-x-auto">
+            <div class="flex justify-start md:justify-center space-x-2 p-3 min-w-max">
+                <button onclick="showSection('intro')" id="btn-intro" class="nav-btn active bg-yellow-400 text-yellow-900 px-4 py-2 rounded-full font-bold flex items-center gap-2">
+                    <i data-lucide="compass"></i> Introducción
+                </button>
+                <button onclick="showSection('tarea')" id="btn-tarea" class="nav-btn bg-green-400 text-green-900 px-4 py-2 rounded-full font-bold flex items-center gap-2">
+                    <i data-lucide="map"></i> Tarea
+                </button>
+                <button onclick="showSection('proceso')" id="btn-proceso" class="nav-btn bg-orange-400 text-orange-900 px-4 py-2 rounded-full font-bold flex items-center gap-2">
+                    <i data-lucide="footprints"></i> Proceso
+                </button>
+                <button onclick="showSection('recursos')" id="btn-recursos" class="nav-btn bg-purple-400 text-purple-900 px-4 py-2 rounded-full font-bold flex items-center gap-2">
+                    <i data-lucide="library"></i> Recursos
+                </button>
+                <button onclick="showSection('evaluacion')" id="btn-evaluacion" class="nav-btn bg-pink-400 text-pink-900 px-4 py-2 rounded-full font-bold flex items-center gap-2">
+                    <i data-lucide="clipboard-check"></i> Evaluación
+                </button>
+                <button onclick="showSection('conclusion')" id="btn-conclusion" class="nav-btn bg-blue-400 text-blue-900 px-4 py-2 rounded-full font-bold flex items-center gap-2">
+                    <i data-lucide="star"></i> Conclusión
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main class="container mx-auto p-4 md:p-8 flex-grow max-w-5xl">
+
+        <!-- SECCIÓN: INTRODUCCIÓN -->
+        <section id="intro" class="section-card active bg-white p-6 md:p-10 rounded-3xl paper-shadow">
+            <div class="flex flex-col md:flex-row items-center gap-8">
+                <div class="md:w-2/3">
+                    <h2 class="text-3xl font-bold text-sky-600 mb-4 flex items-center gap-2">
+                        <i data-lucide="rocket" class="w-8 h-8"></i> ¡Hola Explorador!
+                    </h2>
+                    <p class="text-lg leading-relaxed mb-4">
+                        ¿Alguna vez imaginaste viajar por el mundo sin moverte de tu salón de clases? 
+                    </p>
+                    <p class="text-lg leading-relaxed mb-4">
+                        En esta aventura, te convertirás en un <strong>Viajero Digital</strong>. Explorarás lugares increíbles a través de textos informativos en internet. Descubrirás datos curiosos, información real y secretos sobre cómo funciona nuestro mundo.
+                    </p>
+                    <div class="bg-yellow-100 border-l-4 border-yellow-500 p-4 rounded-r-lg">
+                        <p class="font-bold text-yellow-800">Tu Misión:</p>
+                        <p class="text-yellow-800">Observar, leer y juntar información clave para crear tu propio <strong>"Pasaporte de Información"</strong>.</p>
+                    </div>
+                </div>
+                <div class="md:w-1/3 text-center">
+                    <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Libros y globo terráqueo" class="rounded-2xl shadow-lg transform rotate-2 hover:rotate-0 transition duration-300">
+                </div>
+            </div>
+            <div class="mt-8 text-center">
+                <button onclick="showSection('tarea')" class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-8 rounded-full text-xl shadow-md transform hover:-translate-y-1 transition">
+                    ¡Vamos a la Misión! ➡️
+                </button>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: TAREA -->
+        <section id="tarea" class="section-card bg-white p-6 md:p-10 rounded-3xl paper-shadow border-t-8 border-green-400">
+            <h2 class="text-3xl font-bold text-green-600 mb-6 flex items-center gap-2">
+                <i data-lucide="briefcase" class="w-8 h-8"></i> Tu Misión
+            </h2>
+            
+            <p class="text-lg mb-6">
+                Al terminar este viaje, deberás crear tu <strong>"Pasaporte de Información Digital"</strong>. En él presentarás los datos más importantes sobre un tema que tú investigarás.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-green-50 p-6 rounded-2xl border-2 border-green-200">
+                    <h3 class="text-xl font-bold text-green-700 mb-3">1. Elige tu tema de viaje:</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-center gap-3 bg-white p-3 rounded-lg shadow-sm">
+                            <span class="text-2xl">🦁</span>
+                            <span class="font-bold">Animales</span>
+                        </li>
+                        <li class="flex items-center gap-3 bg-white p-3 rounded-lg shadow-sm">
+                            <span class="text-2xl">🌪️</span>
+                            <span class="font-bold">Fenómenos Naturales</span>
+                        </li>
+                        <li class="flex items-center gap-3 bg-white p-3 rounded-lg shadow-sm">
+                            <span class="text-2xl">💡</span>
+                            <span class="font-bold">Inventos</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bg-blue-50 p-6 rounded-2xl border-2 border-blue-200">
+                    <h3 class="text-xl font-bold text-blue-700 mb-3">2. Tu Pasaporte debe tener:</h3>
+                    <ul class="list-disc list-inside space-y-2 text-lg text-gray-700">
+                        <li><strong>Título</strong> del tema elegido.</li>
+                        <li><strong>Datos generales:</strong> ¿Qué es? ¿Para qué sirve? ¿Dónde está?</li>
+                        <li><strong>5 datos curiosos</strong> o muy importantes.</li>
+                        <li><strong>Una imagen</strong> o dibujo (¡cuidado con los derechos de autor!).</li>
+                        <li><strong>Tu explicación final</strong> de lo aprendido.</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="mt-8 text-center p-4 bg-gray-100 rounded-xl">
+                <p class="italic text-gray-600">"Este producto demostrará que eres un experto buscando y comprendiendo información."</p>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: PROCESO -->
+        <section id="proceso" class="section-card bg-white p-6 md:p-10 rounded-3xl paper-shadow border-t-8 border-orange-400">
+            <h2 class="text-3xl font-bold text-orange-600 mb-8 flex items-center gap-2">
+                <i data-lucide="map-pin" class="w-8 h-8"></i> El Mapa del Viaje (Pasos)
+            </h2>
+
+            <div class="space-y-6">
+                <!-- Paso 1 -->
+                <div class="flex flex-col md:flex-row gap-4 bg-orange-50 p-4 rounded-xl border border-orange-200">
+                    <div class="flex-shrink-0 bg-orange-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold">1</div>
+                    <div>
+                        <h3 class="text-xl font-bold text-orange-800">Elige tu destino</h3>
+                        <p>Decide qué vas a investigar: ¿Animales, Fenómenos naturales o Inventos? ¡Elige el que más te guste!</p>
+                    </div>
+                </div>
+
+                <!-- Paso 2 -->
+                <div class="flex flex-col md:flex-row gap-4 bg-orange-50 p-4 rounded-xl border border-orange-200">
+                    <div class="flex-shrink-0 bg-orange-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold">2</div>
+                    <div>
+                        <h3 class="text-xl font-bold text-orange-800">Explora las webs</h3>
+                        <p>Ve a la sección de <strong>Recursos</strong> y visita las páginas seguras. Lee al menos 3 artículos diferentes sobre tu tema.</p>
+                    </div>
+                </div>
+
+                <!-- Paso 3 -->
+                <div class="flex flex-col md:flex-row gap-4 bg-orange-50 p-4 rounded-xl border border-orange-200">
+                    <div class="flex-shrink-0 bg-orange-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold">3</div>
+                    <div>
+                        <h3 class="text-xl font-bold text-orange-800">Anota en tu cuaderno</h3>
+                        <p>Mientras lees, responde estas preguntas en una hoja o borrador:</p>
+                        <ul class="list-disc list-inside ml-4 text-sm mt-2 text-gray-700">
+                            <li>¿Qué es? (Definición clara)</li>
+                            <li>¿Cuáles son sus características principales?</li>
+                            <li>¿Qué datos curiosos encontraste?</li>
+                            <li>¿Por qué es importante?</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Paso 4 -->
+                <div class="flex flex-col md:flex-row gap-4 bg-orange-50 p-4 rounded-xl border border-orange-200">
+                    <div class="flex-shrink-0 bg-orange-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold">4</div>
+                    <div>
+                        <h3 class="text-xl font-bold text-orange-800">Crea tu Pasaporte</h3>
+                        <p>Usa una herramienta digital (como Canva, Genially, PowerPoint o Google Slides) para diseñar tu pasaporte. Recuerda incluir:</p>
+                        <div class="grid grid-cols-2 gap-2 mt-2 text-sm">
+                            <span class="bg-white px-2 py-1 rounded border">Carátula con tu nombre</span>
+                            <span class="bg-white px-2 py-1 rounded border">Descripción del tema</span>
+                            <span class="bg-white px-2 py-1 rounded border">Imágenes bonitas</span>
+                            <span class="bg-white px-2 py-1 rounded border">Reflexión final</span>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- Paso 5 -->
+                 <div class="flex flex-col md:flex-row gap-4 bg-orange-50 p-4 rounded-xl border border-orange-200">
+                    <div class="flex-shrink-0 bg-orange-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold">5</div>
+                    <div>
+                        <h3 class="text-xl font-bold text-orange-800">Comparte</h3>
+                        <p>Muestra tu pasaporte al profesor y a tus compañeros. ¡Cuéntales qué aprendiste!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: RECURSOS -->
+        <section id="recursos" class="section-card bg-white p-6 md:p-10 rounded-3xl paper-shadow border-t-8 border-purple-400">
+            <h2 class="text-3xl font-bold text-purple-600 mb-6 flex items-center gap-2">
+                <i data-lucide="search" class="w-8 h-8"></i> Sitios Seguros para Investigar
+            </h2>
+            <p class="mb-6 text-lg">Aquí tienes las "brújulas" para tu viaje. Haz clic en los enlaces para visitar las páginas.</p>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Card Animales -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow">
+                    <div class="bg-yellow-400 h-20 flex items-center justify-center text-4xl">🦁</div>
+                    <div class="p-6">
+                        <h3 class="font-bold text-xl mb-2">Animales</h3>
+                        <ul class="space-y-4">
+                            <li>
+                                <a href="https://kids.nationalgeographic.com" target="_blank" class="text-blue-600 font-bold hover:underline flex items-center gap-1">
+                                    Nat Geo Kids <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                                <p class="text-xs text-gray-500">Información increíble sobre animales.</p>
+                            </li>
+                            <li>
+                                <a href="https://www.bioenciclopedia.com" target="_blank" class="text-blue-600 font-bold hover:underline flex items-center gap-1">
+                                    BioEnciclopedia <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                                <p class="text-xs text-gray-500">Versiones sencillas para consulta.</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Card Fenomenos -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow">
+                    <div class="bg-blue-400 h-20 flex items-center justify-center text-4xl">🌪️</div>
+                    <div class="p-6">
+                        <h3 class="font-bold text-xl mb-2">Fenómenos Naturales</h3>
+                        <ul class="space-y-4">
+                            <li>
+                                <a href="https://spaceplace.nasa.gov" target="_blank" class="text-blue-600 font-bold hover:underline flex items-center gap-1">
+                                    NASA Space Place <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                                <p class="text-xs text-gray-500">Explora la tierra y el espacio.</p>
+                            </li>
+                            <li>
+                                <a href="https://www.ducksters.com/science/earth_science/" target="_blank" class="text-blue-600 font-bold hover:underline flex items-center gap-1">
+                                    Ducksters Science <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                                <p class="text-xs text-gray-500">Ciencia de la Tierra fácil de leer.</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Card Inventos -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow">
+                    <div class="bg-red-400 h-20 flex items-center justify-center text-4xl">💡</div>
+                    <div class="p-6">
+                        <h3 class="font-bold text-xl mb-2">Inventos</h3>
+                        <ul class="space-y-4">
+                            <li>
+                                <a href="https://www.si.edu/kids" target="_blank" class="text-blue-600 font-bold hover:underline flex items-center gap-1">
+                                    Smithsonian Kids <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                                <p class="text-xs text-gray-500">Historia e inventos curiosos.</p>
+                            </li>
+                            <li>
+                                <a href="https://www.bbc.co.uk/bitesize/primary" target="_blank" class="text-blue-600 font-bold hover:underline flex items-center gap-1">
+                                    BBC Bitesize <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                                <p class="text-xs text-gray-500">Videos y guías educativas.</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 bg-purple-50 p-4 rounded-xl border border-purple-200">
+                <h3 class="font-bold text-purple-800 mb-2">🛠️ Herramientas para crear tu Pasaporte:</h3>
+                <div class="flex flex-wrap gap-3">
+                    <span class="bg-white px-3 py-1 rounded shadow text-sm font-semibold">Canva</span>
+                    <span class="bg-white px-3 py-1 rounded shadow text-sm font-semibold">Genially</span>
+                    <span class="bg-white px-3 py-1 rounded shadow text-sm font-semibold">Google Slides</span>
+                    <span class="bg-white px-3 py-1 rounded shadow text-sm font-semibold">StoryJumper</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: EVALUACIÓN -->
+        <section id="evaluacion" class="section-card bg-white p-6 md:p-10 rounded-3xl paper-shadow border-t-8 border-pink-400">
+            <h2 class="text-3xl font-bold text-pink-600 mb-6 flex items-center gap-2">
+                <i data-lucide="clipboard-check" class="w-8 h-8"></i> ¿Cómo serás evaluado?
+            </h2>
+            <p class="mb-4">Antes de entregar, revisa esta lista para asegurarte de ganar todos los puntos. ¡Tú puedes!</p>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse rounded-lg overflow-hidden shadow-sm">
+                    <thead>
+                        <tr class="bg-pink-500 text-white">
+                            <th class="p-4">Criterio</th>
+                            <th class="p-4">Lo que debes lograr</th>
+                            <th class="p-4 text-center">Puntos</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm md:text-base">
+                        <tr class="bg-pink-50 border-b border-pink-100">
+                            <td class="p-4 font-bold text-pink-900">1. Introducción</td>
+                            <td class="p-4">Presentas el tema de forma bonita, clara y que dé ganas de leer.</td>
+                            <td class="p-4 text-center font-bold">1</td>
+                        </tr>
+                        <tr class="bg-white border-b border-pink-100">
+                            <td class="p-4 font-bold text-pink-900">2. Tarea (Contenido)</td>
+                            <td class="p-4">Tu pasaporte tiene toda la información y se entiende bien lo que leíste.</td>
+                            <td class="p-4 text-center font-bold">2</td>
+                        </tr>
+                        <tr class="bg-pink-50 border-b border-pink-100">
+                            <td class="p-4 font-bold text-pink-900">3. Proceso</td>
+                            <td class="p-4">Se nota que seguiste los pasos y usaste las herramientas digitales.</td>
+                            <td class="p-4 text-center font-bold">3</td>
+                        </tr>
+                        <tr class="bg-white border-b border-pink-100">
+                            <td class="p-4 font-bold text-pink-900">4. Recursos</td>
+                            <td class="p-4">Usaste información de las páginas confiables que te dimos.</td>
+                            <td class="p-4 text-center font-bold">2</td>
+                        </tr>
+                        <tr class="bg-pink-50 border-b border-pink-100">
+                            <td class="p-4 font-bold text-pink-900">5. Evaluación y Conclusión</td>
+                            <td class="p-4">Incluiste tu reflexión final sobre lo que aprendiste.</td>
+                            <td class="p-4 text-center font-bold">5</td>
+                        </tr>
+                        <tr class="bg-white border-b border-pink-100">
+                            <td class="p-4 font-bold text-pink-900">6. Diseño</td>
+                            <td class="p-4">Tu trabajo está ordenado, limpio y se ve genial.</td>
+                            <td class="p-4 text-center font-bold">1</td>
+                        </tr>
+                        <tr class="bg-gray-800 text-white font-bold text-lg">
+                            <td class="p-4" colspan="2">TOTAL MÁXIMO</td>
+                            <td class="p-4 text-center">14 pts</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: CONCLUSIÓN -->
+        <section id="conclusion" class="section-card bg-white p-6 md:p-10 rounded-3xl paper-shadow border-t-8 border-blue-400">
+            <h2 class="text-3xl font-bold text-blue-600 mb-6 flex items-center gap-2">
+                <i data-lucide="award" class="w-8 h-8"></i> ¡Fin del Viaje!
+            </h2>
+            
+            <div class="bg-blue-50 p-6 rounded-2xl border border-blue-200 text-center">
+                <p class="text-xl mb-4 leading-relaxed">
+                    ¡Felicidades, Viajero! 🎉<br>
+                    Has recorrido caminos digitales para descubrir cómo funcionan los fenómenos, los animales o los inventos.
+                </p>
+                <p class="text-lg mb-6">
+                    Esta experiencia te ha servido para aprender a leer con atención, buscar información real y crear algo nuevo con ella.
+                </p>
+                
+                <hr class="border-blue-200 my-6">
+
+                <h3 class="font-bold text-lg text-blue-800 mb-4">Para cerrar tu viaje, responde en tu cuaderno o pasaporte:</h3>
+                <div class="bg-white p-4 rounded-xl shadow-inner inline-block text-left">
+                    <p class="font-medium text-gray-700 italic">"¿Cómo cambió tu forma de buscar y entender información gracias a esta aventura?"</p>
+                </div>
+            </div>
+            
+            <div class="mt-8 text-center">
+                <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="text-blue-500 hover:text-blue-700 font-bold underline">
+                    Volver al inicio
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer / Créditos -->
+    <footer class="bg-slate-800 text-slate-300 py-8 text-center mt-8">
+        <div class="container mx-auto px-4">
+            <p class="font-bold text-white mb-2">Créditos de la WebQuest</p>
+            <p class="text-sm mb-4">
+                Edwin Jaramillo Laguna | Mariela Justa Villalva Gonzales | Giannina Patricia Hilario Pérez
+            </p>
+            <p class="text-xs text-slate-500">
+                Basado en el proyecto "Viajeros del texto: navegamos información para comprender".<br>
+                Adaptado para Github Pages.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Script para navegación -->
+    <script>
+        // Inicializar iconos de Lucide
+        lucide.createIcons();
+
+        function showSection(sectionId) {
+            // Ocultar todas las secciones
+            document.querySelectorAll('.section-card').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Quitar clase activa de los botones
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.classList.remove('ring-4');
+                btn.classList.remove('ring-white');
+                btn.classList.remove('ring-opacity-50');
+            });
+
+            // Mostrar la sección seleccionada
+            const selectedSection = document.getElementById(sectionId);
+            if(selectedSection) {
+                selectedSection.classList.add('active');
+            }
+
+            // Activar el botón correspondiente (efecto visual)
+            const activeBtn = document.getElementById('btn-' + sectionId);
+            if(activeBtn) {
+                activeBtn.classList.add('active');
+                activeBtn.classList.add('ring-4');
+                activeBtn.classList.add('ring-white');
+                activeBtn.classList.add('ring-opacity-50');
+            }
+
+            // Scroll suave al inicio del main en móvil para que no se pierdan
+            if(window.innerWidth < 768) {
+                document.querySelector('main').scrollIntoView({behavior: 'smooth'});
+            }
+        }
+    </script>
+</body>
+</html>
