@@ -47,10 +47,34 @@
             border-color: rgba(0,0,0,0.1);
         }
 
-        .step-check { transition: all 0.3s ease; }
-        .step-card.completed { background-color: #dcfce7; border-color: #86efac; }
-        .step-card.completed .step-number { background-color: #22c55e; }
+        /* Estilos robustos para los pasos (Checklist) */
+        .step-check {
+            transition: all 0.3s ease;
+            border-color: #cbd5e1; /* slate-300 */
+        }
+        /* Cuando el paso está completado */
+        .step-card.completed {
+            background-color: #dcfce7; /* green-100 */
+            border-color: #86efac; /* green-300 */
+        }
+        .step-card.completed .step-number {
+            background-color: #22c55e; /* green-500 */
+            color: white;
+        }
+        .step-card.completed .step-check {
+            background-color: #22c55e; /* green-500 */
+            border-color: #22c55e;
+        }
+        /* Controlar visibilidad del icono SVG independientemente de la etiqueta */
+        .step-check svg {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .step-card.completed .step-check svg {
+            opacity: 1;
+        }
         
+        /* Estilos para la rúbrica */
         .rubric-row { cursor: pointer; transition: background-color 0.2s; }
         .rubric-row:hover { background-color: #fce7f3; }
         .rubric-row.selected { background-color: #fbcfe8; border-left: 4px solid #db2777; }
@@ -616,20 +640,13 @@
             confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
         }
 
-        // Pasos (Checklist)
+        // Pasos (Checklist) - CORREGIDO
         function toggleStep(stepNum) {
             const card = document.getElementById('step-' + stepNum);
-            const isCompleted = card.classList.contains('completed');
             
-            if(!isCompleted) {
-                card.classList.add('completed');
-                card.querySelector('.step-check').classList.add('bg-green-500', 'border-green-500');
-                card.querySelector('i').style.opacity = '1';
-            } else {
-                card.classList.remove('completed');
-                card.querySelector('.step-check').classList.remove('bg-green-500', 'border-green-500');
-                card.querySelector('i').style.opacity = '0';
-            }
+            // Alternar clase 'completed' en la tarjeta
+            card.classList.toggle('completed');
+
             updateProgress();
         }
 
