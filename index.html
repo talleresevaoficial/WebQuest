@@ -4,456 +4,708 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebQuest: Viajeros del Texto</title>
-    <!-- Importamos Tailwind CSS para el diseño -->
+    <!-- Importamos Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Importamos una fuente divertida para niños (Fredoka) -->
+    <!-- Fuente divertida (Fredoka) -->
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&display=swap" rel="stylesheet">
-    <!-- Iconos de Lucide -->
+    <!-- Iconos Lucide -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Confetti para celebraciones -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
     <style>
         body {
             font-family: 'Fredoka', sans-serif;
             background-color: #f0f9ff;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23bae6fd' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background-image: radial-gradient(#bae6fd 2px, transparent 2px);
+            background-size: 30px 30px;
         }
+        
         .section-card {
             display: none;
-            animation: fadeIn 0.5s ease-in-out;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.4s ease-out, transform 0.4s ease-out;
         }
         .section-card.active {
             display: block;
+            opacity: 1;
+            transform: translateY(0);
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+
         .nav-btn {
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .nav-btn:hover, .nav-btn.active {
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+        .nav-btn.active {
             transform: scale(1.05);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.2);
+            border-bottom-width: 4px;
+            border-color: rgba(0,0,0,0.1);
         }
-        .paper-shadow {
-            box-shadow: 5px 5px 0px 0px rgba(0,0,0,0.1);
-            border: 2px solid #e5e7eb;
+
+        .step-check { transition: all 0.3s ease; }
+        .step-card.completed { background-color: #dcfce7; border-color: #86efac; }
+        .step-card.completed .step-number { background-color: #22c55e; }
+        
+        .rubric-row { cursor: pointer; transition: background-color 0.2s; }
+        .rubric-row:hover { background-color: #fce7f3; }
+        .rubric-row.selected { background-color: #fbcfe8; border-left: 4px solid #db2777; }
+        .rubric-check { opacity: 0; transition: opacity 0.2s; }
+        .rubric-row.selected .rubric-check { opacity: 1 !important; }
+
+        /* Estilo para el input de imagen */
+        .image-upload-label {
+            cursor: pointer;
+            transition: all 0.3s;
         }
+        .image-upload-label:hover {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+        }
+
+        /* CONFIGURACIÓN DE IMPRESIÓN */
+        @media print {
+            header, nav, footer, main, .no-print { display: none !important; }
+            body, html { background: white; margin: 0; padding: 0; height: 100%; }
+            
+            #print-area {
+                display: block !important;
+                width: 100%;
+                height: 100%;
+                padding: 20px;
+                box-sizing: border-box;
+            }
+
+            .passport-layout {
+                border: 4px solid #1e3a8a; /* Azul oscuro */
+                border-radius: 20px;
+                background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2393c5fd' fill-opacity='0.1'%3E%3Cpath d='M0 0h20L0 20z'/%3E%3C/g%3E%3C/svg%3E");
+                padding: 0;
+                overflow: hidden;
+                box-shadow: none;
+                width: 100%;
+                max-width: 1000px;
+                margin: 0 auto;
+                page-break-inside: avoid;
+            }
+
+            .passport-header {
+                background-color: #1e3a8a;
+                color: white;
+                padding: 20px;
+                text-align: center;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .passport-body {
+                padding: 30px;
+                display: grid;
+                grid-template-columns: 1fr 2fr;
+                gap: 30px;
+            }
+        }
+        
+        #print-area { display: none; }
     </style>
 </head>
-<body class="text-gray-700 min-h-screen flex flex-col">
+<body class="text-slate-700 min-h-screen flex flex-col">
 
-    <!-- Encabezado / Header -->
-    <header class="bg-sky-500 text-white p-6 text-center border-b-4 border-sky-600 shadow-lg relative overflow-hidden">
-        <div class="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
-            <!-- Decoración de fondo simple -->
-            <div class="absolute top-2 left-10 text-6xl">🌍</div>
-            <div class="absolute bottom-2 right-10 text-6xl">✈️</div>
-        </div>
-        <div class="relative z-10 container mx-auto">
-            <h1 class="text-4xl md:text-5xl font-bold mb-2 text-yellow-300 drop-shadow-md">Viajeros del Texto</h1>
-            <p class="text-xl md:text-2xl font-light">¡Una aventura para explorar el mundo leyendo!</p>
-            <div class="mt-2 text-sm opacity-90 font-mono bg-sky-600 inline-block px-3 py-1 rounded-full">
-                Nivel: 3er Grado
+    <!-- Encabezado -->
+    <header class="bg-gradient-to-r from-sky-400 to-blue-500 text-white p-6 shadow-lg border-b-4 border-blue-600 relative overflow-hidden">
+        <div class="absolute top-4 left-4 text-4xl animate-bounce" style="animation-duration: 3s;">🌍</div>
+        <div class="absolute bottom-4 right-10 text-4xl animate-bounce" style="animation-duration: 4s;">🚀</div>
+        <div class="relative z-10 container mx-auto text-center">
+            <h1 class="text-4xl md:text-6xl font-black mb-2 text-yellow-300 drop-shadow-[0_2px_2px_rgba(0,0,0,0.3)] tracking-wide">
+                Viajeros del Texto
+            </h1>
+            <p class="text-xl md:text-2xl font-medium text-blue-50">¡Tu aventura de investigación comienza aquí!</p>
+            <div class="mt-4 inline-block bg-white/20 backdrop-blur-sm px-4 py-1 rounded-full text-sm font-bold border border-white/30">
+                Nivel: 3er Grado • Primaria
             </div>
         </div>
     </header>
 
     <!-- Navegación -->
-    <nav class="bg-white sticky top-0 z-50 shadow-md border-b-2 border-gray-100">
-        <div class="container mx-auto px-4 overflow-x-auto">
-            <div class="flex justify-start md:justify-center space-x-2 p-3 min-w-max">
-                <button onclick="showSection('intro')" id="btn-intro" class="nav-btn active bg-yellow-400 text-yellow-900 px-4 py-2 rounded-full font-bold flex items-center gap-2">
-                    <i data-lucide="compass"></i> Introducción
+    <nav class="bg-white sticky top-0 z-50 shadow-md border-b border-gray-100">
+        <div class="container mx-auto px-2 overflow-x-auto no-scrollbar">
+            <div class="flex justify-start md:justify-center space-x-2 p-2 min-w-max">
+                <button onclick="navTo('intro')" id="btn-intro" class="nav-btn active bg-yellow-400 text-yellow-900 px-4 py-2 rounded-xl font-bold flex items-center gap-2">
+                    <i data-lucide="compass" class="w-5 h-5"></i> Inicio
                 </button>
-                <button onclick="showSection('tarea')" id="btn-tarea" class="nav-btn bg-green-400 text-green-900 px-4 py-2 rounded-full font-bold flex items-center gap-2">
-                    <i data-lucide="map"></i> Tarea
+                <button onclick="navTo('tarea')" id="btn-tarea" class="nav-btn bg-green-400 text-green-900 px-4 py-2 rounded-xl font-bold flex items-center gap-2">
+                    <i data-lucide="map" class="w-5 h-5"></i> Misión
                 </button>
-                <button onclick="showSection('proceso')" id="btn-proceso" class="nav-btn bg-orange-400 text-orange-900 px-4 py-2 rounded-full font-bold flex items-center gap-2">
-                    <i data-lucide="footprints"></i> Proceso
+                <button onclick="navTo('proceso')" id="btn-proceso" class="nav-btn bg-orange-400 text-orange-900 px-4 py-2 rounded-xl font-bold flex items-center gap-2">
+                    <i data-lucide="footprints" class="w-5 h-5"></i> Pasos
                 </button>
-                <button onclick="showSection('recursos')" id="btn-recursos" class="nav-btn bg-purple-400 text-purple-900 px-4 py-2 rounded-full font-bold flex items-center gap-2">
-                    <i data-lucide="library"></i> Recursos
+                <button onclick="navTo('recursos')" id="btn-recursos" class="nav-btn bg-purple-400 text-purple-900 px-4 py-2 rounded-xl font-bold flex items-center gap-2">
+                    <i data-lucide="library" class="w-5 h-5"></i> Biblioteca
                 </button>
-                <button onclick="showSection('evaluacion')" id="btn-evaluacion" class="nav-btn bg-pink-400 text-pink-900 px-4 py-2 rounded-full font-bold flex items-center gap-2">
-                    <i data-lucide="clipboard-check"></i> Evaluación
+                <button onclick="navTo('evaluacion')" id="btn-evaluacion" class="nav-btn bg-pink-400 text-pink-900 px-4 py-2 rounded-xl font-bold flex items-center gap-2">
+                    <i data-lucide="check-circle" class="w-5 h-5"></i> Revisión
                 </button>
-                <button onclick="showSection('conclusion')" id="btn-conclusion" class="nav-btn bg-blue-400 text-blue-900 px-4 py-2 rounded-full font-bold flex items-center gap-2">
-                    <i data-lucide="star"></i> Conclusión
+                <button onclick="navTo('conclusion')" id="btn-conclusion" class="nav-btn bg-blue-400 text-blue-900 px-4 py-2 rounded-xl font-bold flex items-center gap-2">
+                    <i data-lucide="pen-tool" class="w-5 h-5"></i> Crear Pasaporte
                 </button>
             </div>
         </div>
     </nav>
 
     <!-- Contenido Principal -->
-    <main class="container mx-auto p-4 md:p-8 flex-grow max-w-5xl">
+    <main class="container mx-auto p-4 md:p-6 flex-grow max-w-5xl">
 
-        <!-- SECCIÓN: INTRODUCCIÓN -->
-        <section id="intro" class="section-card active bg-white p-6 md:p-10 rounded-3xl paper-shadow">
-            <div class="flex flex-col md:flex-row items-center gap-8">
-                <div class="md:w-2/3">
-                    <h2 class="text-3xl font-bold text-sky-600 mb-4 flex items-center gap-2">
-                        <i data-lucide="rocket" class="w-8 h-8"></i> ¡Hola Explorador!
-                    </h2>
-                    <p class="text-lg leading-relaxed mb-4">
-                        ¿Alguna vez imaginaste viajar por el mundo sin moverte de tu salón de clases? 
-                    </p>
-                    <p class="text-lg leading-relaxed mb-4">
-                        En esta aventura, te convertirás en un <strong>Viajero Digital</strong>. Explorarás lugares increíbles a través de textos informativos en internet. Descubrirás datos curiosos, información real y secretos sobre cómo funciona nuestro mundo.
-                    </p>
-                    <div class="bg-yellow-100 border-l-4 border-yellow-500 p-4 rounded-r-lg">
-                        <p class="font-bold text-yellow-800">Tu Misión:</p>
-                        <p class="text-yellow-800">Observar, leer y juntar información clave para crear tu propio <strong>"Pasaporte de Información"</strong>.</p>
+        <!-- SECCIÓN 1: INTRODUCCIÓN -->
+        <section id="intro" class="section-card active bg-white p-8 rounded-3xl shadow-sm border-2 border-yellow-100">
+            <div class="flex flex-col md:flex-row items-center gap-10">
+                <div class="md:w-3/5 space-y-6">
+                    <div class="inline-flex items-center gap-2 bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-bold">
+                        <i data-lucide="rocket" class="w-4 h-4"></i> ¡Bienvenido a bordo!
                     </div>
+                    <h2 class="text-4xl font-bold text-sky-600">¿Listo para viajar sin maletas?</h2>
+                    <p class="text-lg leading-relaxed text-slate-600">
+                        Imagina que eres un explorador digital. Tu computadora es tu nave y los textos son los mapas. En esta aventura, viajarás por sitios web seguros para descubrir secretos asombrosos sobre el mundo.
+                    </p>
+                    <div class="bg-sky-50 p-6 rounded-2xl border-l-8 border-sky-400">
+                        <h3 class="font-bold text-sky-800 text-xl mb-2">🎯 Tu Objetivo:</h3>
+                        <p class="text-sky-900">Convertirte en un experto investigador y crear tu propio <strong>"Pasaporte de Información"</strong> con todo lo que descubras.</p>
+                    </div>
+                    <button onclick="navTo('tarea')" class="bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-bold py-3 px-8 rounded-full text-lg shadow-lg transform hover:-translate-y-1 transition flex items-center gap-2">
+                        ¡Acepto el reto! <i data-lucide="arrow-right"></i>
+                    </button>
                 </div>
-                <div class="md:w-1/3 text-center">
-                    <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Libros y globo terráqueo" class="rounded-2xl shadow-lg transform rotate-2 hover:rotate-0 transition duration-300">
+                <div class="md:w-2/5">
+                    <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Niño aprendiendo" class="rounded-2xl shadow-xl transform rotate-3 hover:rotate-0 transition duration-500 w-full object-cover h-64 md:h-80">
                 </div>
             </div>
-            <div class="mt-8 text-center">
-                <button onclick="showSection('tarea')" class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-8 rounded-full text-xl shadow-md transform hover:-translate-y-1 transition">
-                    ¡Vamos a la Misión! ➡️
+        </section>
+
+        <!-- SECCIÓN 2: TAREA -->
+        <section id="tarea" class="section-card bg-white p-8 rounded-3xl shadow-sm border-t-8 border-green-400">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-green-600 flex justify-center items-center gap-3">
+                    <i data-lucide="map" class="w-8 h-8"></i> Tu Misión Secreta
+                </h2>
+                <p class="text-slate-500 mt-2">Debes elegir UN tema para investigar y crear tu Pasaporte.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 items-start">
+                <div class="bg-green-50 p-6 rounded-2xl border-2 border-green-200 shadow-sm">
+                    <h3 class="text-xl font-bold text-green-800 mb-4">1. Elige tu destino:</h3>
+                    
+                    <div class="space-y-3" id="theme-selector">
+                        <button onclick="selectTheme('Animales')" id="btn-theme-animales" class="theme-opt w-full text-left p-4 rounded-xl bg-white border-2 border-transparent hover:border-green-300 shadow-sm transition flex items-center gap-4 group">
+                            <span class="text-3xl bg-green-100 p-2 rounded-lg">🦁</span>
+                            <div>
+                                <h4 class="font-bold text-gray-700 text-lg group-hover:text-green-600">Animales Asombrosos</h4>
+                                <p class="text-xs text-gray-400">Descubre la vida salvaje</p>
+                            </div>
+                            <i data-lucide="check-circle" class="ml-auto w-6 h-6 text-green-500 opacity-0 transform scale-0 transition-all check-icon"></i>
+                        </button>
+                        <button onclick="selectTheme('Fenómenos Naturales')" id="btn-theme-fenomenos" class="theme-opt w-full text-left p-4 rounded-xl bg-white border-2 border-transparent hover:border-blue-300 shadow-sm transition flex items-center gap-4 group">
+                            <span class="text-3xl bg-blue-100 p-2 rounded-lg">🌪️</span>
+                            <div>
+                                <h4 class="font-bold text-gray-700 text-lg group-hover:text-blue-600">Fenómenos Naturales</h4>
+                                <p class="text-xs text-gray-400">Volcanes, tornados y más</p>
+                            </div>
+                            <i data-lucide="check-circle" class="ml-auto w-6 h-6 text-blue-500 opacity-0 transform scale-0 transition-all check-icon"></i>
+                        </button>
+                        <button onclick="selectTheme('Inventos')" id="btn-theme-inventos" class="theme-opt w-full text-left p-4 rounded-xl bg-white border-2 border-transparent hover:border-red-300 shadow-sm transition flex items-center gap-4 group">
+                            <span class="text-3xl bg-red-100 p-2 rounded-lg">💡</span>
+                            <div>
+                                <h4 class="font-bold text-gray-700 text-lg group-hover:text-red-600">Grandes Inventos</h4>
+                                <p class="text-xs text-gray-400">Ideas que cambiaron el mundo</p>
+                            </div>
+                            <i data-lucide="check-circle" class="ml-auto w-6 h-6 text-red-500 opacity-0 transform scale-0 transition-all check-icon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border-2 border-slate-100 relative">
+                    <h3 class="text-xl font-bold text-slate-700 mb-4">2. ¿Qué debe tener tu Pasaporte?</h3>
+                    <ul class="space-y-3 text-sm md:text-base">
+                        <li class="flex items-start gap-3"><i data-lucide="user" class="text-blue-400 mt-1 shrink-0"></i> <span><strong>Tu Nombre</strong> de explorador.</span></li>
+                        <li class="flex items-start gap-3"><i data-lucide="type" class="text-blue-400 mt-1 shrink-0"></i> <span><strong>Título creativo</strong> del tema.</span></li>
+                        <li class="flex items-start gap-3"><i data-lucide="info" class="text-blue-400 mt-1 shrink-0"></i> <span><strong>Datos Generales:</strong> ¿Qué es?</span></li>
+                        <li class="flex items-start gap-3"><i data-lucide="star" class="text-blue-400 mt-1 shrink-0"></i> <span><strong>5 Datos Curiosos</strong>.</span></li>
+                        <li class="flex items-start gap-3"><i data-lucide="image" class="text-blue-400 mt-1 shrink-0"></i> <span><strong>Un dibujo o foto</strong>.</span></li>
+                        <li class="flex items-start gap-3"><i data-lucide="message-circle" class="text-blue-400 mt-1 shrink-0"></i> <span><strong>Reflexión final</strong>.</span></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-end">
+                <button onclick="navTo('proceso')" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg shadow transition flex items-center gap-2">
+                    Ver los Pasos <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </button>
             </div>
         </section>
 
-        <!-- SECCIÓN: TAREA -->
-        <section id="tarea" class="section-card bg-white p-6 md:p-10 rounded-3xl paper-shadow border-t-8 border-green-400">
-            <h2 class="text-3xl font-bold text-green-600 mb-6 flex items-center gap-2">
-                <i data-lucide="briefcase" class="w-8 h-8"></i> Tu Misión
+        <!-- SECCIÓN 3: PROCESO -->
+        <section id="proceso" class="section-card bg-white p-8 rounded-3xl shadow-sm border-t-8 border-orange-400">
+            <h2 class="text-3xl font-bold text-orange-600 mb-6 flex items-center gap-2">
+                <i data-lucide="footprints" class="w-8 h-8"></i> Ruta del Viajero
             </h2>
-            
-            <p class="text-lg mb-6">
-                Al terminar este viaje, deberás crear tu <strong>"Pasaporte de Información Digital"</strong>. En él presentarás los datos más importantes sobre un tema que tú investigarás.
-            </p>
-
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="bg-green-50 p-6 rounded-2xl border-2 border-green-200">
-                    <h3 class="text-xl font-bold text-green-700 mb-3">1. Elige tu tema de viaje:</h3>
-                    <ul class="space-y-3">
-                        <li class="flex items-center gap-3 bg-white p-3 rounded-lg shadow-sm">
-                            <span class="text-2xl">🦁</span>
-                            <span class="font-bold">Animales</span>
-                        </li>
-                        <li class="flex items-center gap-3 bg-white p-3 rounded-lg shadow-sm">
-                            <span class="text-2xl">🌪️</span>
-                            <span class="font-bold">Fenómenos Naturales</span>
-                        </li>
-                        <li class="flex items-center gap-3 bg-white p-3 rounded-lg shadow-sm">
-                            <span class="text-2xl">💡</span>
-                            <span class="font-bold">Inventos</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="bg-blue-50 p-6 rounded-2xl border-2 border-blue-200">
-                    <h3 class="text-xl font-bold text-blue-700 mb-3">2. Tu Pasaporte debe tener:</h3>
-                    <ul class="list-disc list-inside space-y-2 text-lg text-gray-700">
-                        <li><strong>Título</strong> del tema elegido.</li>
-                        <li><strong>Datos generales:</strong> ¿Qué es? ¿Para qué sirve? ¿Dónde está?</li>
-                        <li><strong>5 datos curiosos</strong> o muy importantes.</li>
-                        <li><strong>Una imagen</strong> o dibujo (¡cuidado con los derechos de autor!).</li>
-                        <li><strong>Tu explicación final</strong> de lo aprendido.</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="mt-8 text-center p-4 bg-gray-100 rounded-xl">
-                <p class="italic text-gray-600">"Este producto demostrará que eres un experto buscando y comprendiendo información."</p>
-            </div>
-        </section>
-
-        <!-- SECCIÓN: PROCESO -->
-        <section id="proceso" class="section-card bg-white p-6 md:p-10 rounded-3xl paper-shadow border-t-8 border-orange-400">
-            <h2 class="text-3xl font-bold text-orange-600 mb-8 flex items-center gap-2">
-                <i data-lucide="map-pin" class="w-8 h-8"></i> El Mapa del Viaje (Pasos)
-            </h2>
-
-            <div class="space-y-6">
+            <div class="space-y-4">
                 <!-- Paso 1 -->
-                <div class="flex flex-col md:flex-row gap-4 bg-orange-50 p-4 rounded-xl border border-orange-200">
-                    <div class="flex-shrink-0 bg-orange-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold">1</div>
-                    <div>
-                        <h3 class="text-xl font-bold text-orange-800">Elige tu destino</h3>
-                        <p>Decide qué vas a investigar: ¿Animales, Fenómenos naturales o Inventos? ¡Elige el que más te guste!</p>
+                <div onclick="toggleStep(1)" id="step-1" class="step-card group cursor-pointer border-2 border-slate-100 rounded-2xl p-4 flex items-center gap-4 hover:border-orange-300 transition bg-white">
+                    <div class="step-number w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-lg">1</div>
+                    <div class="flex-grow">
+                        <h3 class="font-bold text-slate-700">Elección del Tema</h3>
+                        <p class="text-sm text-slate-500">Decide tu investigación en la sección Misión.</p>
+                    </div>
+                    <div class="step-check w-8 h-8 rounded-full border-2 border-slate-300 flex items-center justify-center">
+                        <i data-lucide="check" class="text-white w-5 h-5 opacity-0"></i>
                     </div>
                 </div>
-
                 <!-- Paso 2 -->
-                <div class="flex flex-col md:flex-row gap-4 bg-orange-50 p-4 rounded-xl border border-orange-200">
-                    <div class="flex-shrink-0 bg-orange-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold">2</div>
-                    <div>
-                        <h3 class="text-xl font-bold text-orange-800">Explora las webs</h3>
-                        <p>Ve a la sección de <strong>Recursos</strong> y visita las páginas seguras. Lee al menos 3 artículos diferentes sobre tu tema.</p>
+                <div onclick="toggleStep(2)" id="step-2" class="step-card group cursor-pointer border-2 border-slate-100 rounded-2xl p-4 flex items-center gap-4 hover:border-orange-300 transition bg-white">
+                    <div class="step-number w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-lg">2</div>
+                    <div class="flex-grow">
+                        <h3 class="font-bold text-slate-700">Exploración Digital</h3>
+                        <p class="text-sm text-slate-500">Lee los artículos en la sección Biblioteca.</p>
+                    </div>
+                    <div class="step-check w-8 h-8 rounded-full border-2 border-slate-300 flex items-center justify-center">
+                        <i data-lucide="check" class="text-white w-5 h-5 opacity-0"></i>
                     </div>
                 </div>
-
                 <!-- Paso 3 -->
-                <div class="flex flex-col md:flex-row gap-4 bg-orange-50 p-4 rounded-xl border border-orange-200">
-                    <div class="flex-shrink-0 bg-orange-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold">3</div>
-                    <div>
-                        <h3 class="text-xl font-bold text-orange-800">Anota en tu cuaderno</h3>
-                        <p>Mientras lees, responde estas preguntas en una hoja o borrador:</p>
-                        <ul class="list-disc list-inside ml-4 text-sm mt-2 text-gray-700">
-                            <li>¿Qué es? (Definición clara)</li>
-                            <li>¿Cuáles son sus características principales?</li>
-                            <li>¿Qué datos curiosos encontraste?</li>
-                            <li>¿Por qué es importante?</li>
-                        </ul>
+                <div onclick="toggleStep(3)" id="step-3" class="step-card group cursor-pointer border-2 border-slate-100 rounded-2xl p-4 flex items-center gap-4 hover:border-orange-300 transition bg-white">
+                    <div class="step-number w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-lg">3</div>
+                    <div class="flex-grow">
+                        <h3 class="font-bold text-slate-700">Toma de Notas</h3>
+                        <p class="text-sm text-slate-500">Anota los 5 datos curiosos en tu cuaderno.</p>
+                    </div>
+                    <div class="step-check w-8 h-8 rounded-full border-2 border-slate-300 flex items-center justify-center">
+                        <i data-lucide="check" class="text-white w-5 h-5 opacity-0"></i>
                     </div>
                 </div>
-
-                <!-- Paso 4 -->
-                <div class="flex flex-col md:flex-row gap-4 bg-orange-50 p-4 rounded-xl border border-orange-200">
-                    <div class="flex-shrink-0 bg-orange-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold">4</div>
-                    <div>
-                        <h3 class="text-xl font-bold text-orange-800">Crea tu Pasaporte</h3>
-                        <p>Usa una herramienta digital (como Canva, Genially, PowerPoint o Google Slides) para diseñar tu pasaporte. Recuerda incluir:</p>
-                        <div class="grid grid-cols-2 gap-2 mt-2 text-sm">
-                            <span class="bg-white px-2 py-1 rounded border">Carátula con tu nombre</span>
-                            <span class="bg-white px-2 py-1 rounded border">Descripción del tema</span>
-                            <span class="bg-white px-2 py-1 rounded border">Imágenes bonitas</span>
-                            <span class="bg-white px-2 py-1 rounded border">Reflexión final</span>
-                        </div>
+                 <!-- Paso 4 -->
+                 <div onclick="toggleStep(4)" id="step-4" class="step-card group cursor-pointer border-2 border-slate-100 rounded-2xl p-4 flex items-center gap-4 hover:border-orange-300 transition bg-white">
+                    <div class="step-number w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-lg">4</div>
+                    <div class="flex-grow">
+                        <h3 class="font-bold text-slate-700">Busca una Imagen</h3>
+                        <p class="text-sm text-slate-500">Consigue una foto o haz un dibujo de tu tema.</p>
+                    </div>
+                    <div class="step-check w-8 h-8 rounded-full border-2 border-slate-300 flex items-center justify-center">
+                        <i data-lucide="check" class="text-white w-5 h-5 opacity-0"></i>
                     </div>
                 </div>
-
                  <!-- Paso 5 -->
-                 <div class="flex flex-col md:flex-row gap-4 bg-orange-50 p-4 rounded-xl border border-orange-200">
-                    <div class="flex-shrink-0 bg-orange-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold">5</div>
-                    <div>
-                        <h3 class="text-xl font-bold text-orange-800">Comparte</h3>
-                        <p>Muestra tu pasaporte al profesor y a tus compañeros. ¡Cuéntales qué aprendiste!</p>
+                 <div onclick="toggleStep(5)" id="step-5" class="step-card group cursor-pointer border-2 border-slate-100 rounded-2xl p-4 flex items-center gap-4 hover:border-orange-300 transition bg-white">
+                    <div class="step-number w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-lg">5</div>
+                    <div class="flex-grow">
+                        <h3 class="font-bold text-slate-700">Crear Pasaporte</h3>
+                        <p class="text-sm text-slate-500">Ve a "Crear Pasaporte", llena los datos e imprime.</p>
+                    </div>
+                    <div class="step-check w-8 h-8 rounded-full border-2 border-slate-300 flex items-center justify-center">
+                        <i data-lucide="check" class="text-white w-5 h-5 opacity-0"></i>
                     </div>
                 </div>
             </div>
+            <div class="mt-8 bg-gray-100 rounded-full h-4 overflow-hidden">
+                <div id="progress-bar" class="bg-orange-400 h-full w-0 transition-all duration-500"></div>
+            </div>
+            <p class="text-center text-sm text-gray-500 mt-2">Progreso: <span id="progress-text">0/5</span></p>
         </section>
 
-        <!-- SECCIÓN: RECURSOS -->
-        <section id="recursos" class="section-card bg-white p-6 md:p-10 rounded-3xl paper-shadow border-t-8 border-purple-400">
+        <!-- SECCIÓN 4: RECURSOS -->
+        <section id="recursos" class="section-card bg-white p-8 rounded-3xl shadow-sm border-t-8 border-purple-400">
             <h2 class="text-3xl font-bold text-purple-600 mb-6 flex items-center gap-2">
-                <i data-lucide="search" class="w-8 h-8"></i> Sitios Seguros para Investigar
+                <i data-lucide="library" class="w-8 h-8"></i> Biblioteca Digital
             </h2>
-            <p class="mb-6 text-lg">Aquí tienes las "brújulas" para tu viaje. Haz clic en los enlaces para visitar las páginas.</p>
-
             <div class="grid md:grid-cols-3 gap-6">
-                <!-- Card Animales -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow">
-                    <div class="bg-yellow-400 h-20 flex items-center justify-center text-4xl">🦁</div>
-                    <div class="p-6">
-                        <h3 class="font-bold text-xl mb-2">Animales</h3>
-                        <ul class="space-y-4">
-                            <li>
-                                <a href="https://kids.nationalgeographic.com" target="_blank" class="text-blue-600 font-bold hover:underline flex items-center gap-1">
-                                    Nat Geo Kids <i data-lucide="external-link" class="w-4 h-4"></i>
-                                </a>
-                                <p class="text-xs text-gray-500">Información increíble sobre animales.</p>
-                            </li>
-                            <li>
-                                <a href="https://www.bioenciclopedia.com" target="_blank" class="text-blue-600 font-bold hover:underline flex items-center gap-1">
-                                    BioEnciclopedia <i data-lucide="external-link" class="w-4 h-4"></i>
-                                </a>
-                                <p class="text-xs text-gray-500">Versiones sencillas para consulta.</p>
-                            </li>
-                        </ul>
-                    </div>
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all p-6">
+                    <div class="bg-yellow-100 rounded-full w-16 h-16 flex items-center justify-center text-3xl mb-4">🦁</div>
+                    <h3 class="font-bold text-lg mb-2">Animales</h3>
+                    <a href="https://kids.nationalgeographic.com" target="_blank" class="text-blue-600 text-sm hover:underline block mb-2">Nat Geo Kids</a>
+                    <a href="https://www.bioenciclopedia.com" target="_blank" class="text-blue-600 text-sm hover:underline block">BioEnciclopedia</a>
                 </div>
-
-                <!-- Card Fenomenos -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow">
-                    <div class="bg-blue-400 h-20 flex items-center justify-center text-4xl">🌪️</div>
-                    <div class="p-6">
-                        <h3 class="font-bold text-xl mb-2">Fenómenos Naturales</h3>
-                        <ul class="space-y-4">
-                            <li>
-                                <a href="https://spaceplace.nasa.gov" target="_blank" class="text-blue-600 font-bold hover:underline flex items-center gap-1">
-                                    NASA Space Place <i data-lucide="external-link" class="w-4 h-4"></i>
-                                </a>
-                                <p class="text-xs text-gray-500">Explora la tierra y el espacio.</p>
-                            </li>
-                            <li>
-                                <a href="https://www.ducksters.com/science/earth_science/" target="_blank" class="text-blue-600 font-bold hover:underline flex items-center gap-1">
-                                    Ducksters Science <i data-lucide="external-link" class="w-4 h-4"></i>
-                                </a>
-                                <p class="text-xs text-gray-500">Ciencia de la Tierra fácil de leer.</p>
-                            </li>
-                        </ul>
-                    </div>
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all p-6">
+                    <div class="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center text-3xl mb-4">🌪️</div>
+                    <h3 class="font-bold text-lg mb-2">Fenómenos</h3>
+                    <a href="https://spaceplace.nasa.gov" target="_blank" class="text-blue-600 text-sm hover:underline block mb-2">NASA Space Place</a>
+                    <a href="https://www.ducksters.com/science/earth_science/" target="_blank" class="text-blue-600 text-sm hover:underline block">Ducksters Earth</a>
                 </div>
-
-                <!-- Card Inventos -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow">
-                    <div class="bg-red-400 h-20 flex items-center justify-center text-4xl">💡</div>
-                    <div class="p-6">
-                        <h3 class="font-bold text-xl mb-2">Inventos</h3>
-                        <ul class="space-y-4">
-                            <li>
-                                <a href="https://www.si.edu/kids" target="_blank" class="text-blue-600 font-bold hover:underline flex items-center gap-1">
-                                    Smithsonian Kids <i data-lucide="external-link" class="w-4 h-4"></i>
-                                </a>
-                                <p class="text-xs text-gray-500">Historia e inventos curiosos.</p>
-                            </li>
-                            <li>
-                                <a href="https://www.bbc.co.uk/bitesize/primary" target="_blank" class="text-blue-600 font-bold hover:underline flex items-center gap-1">
-                                    BBC Bitesize <i data-lucide="external-link" class="w-4 h-4"></i>
-                                </a>
-                                <p class="text-xs text-gray-500">Videos y guías educativas.</p>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-8 bg-purple-50 p-4 rounded-xl border border-purple-200">
-                <h3 class="font-bold text-purple-800 mb-2">🛠️ Herramientas para crear tu Pasaporte:</h3>
-                <div class="flex flex-wrap gap-3">
-                    <span class="bg-white px-3 py-1 rounded shadow text-sm font-semibold">Canva</span>
-                    <span class="bg-white px-3 py-1 rounded shadow text-sm font-semibold">Genially</span>
-                    <span class="bg-white px-3 py-1 rounded shadow text-sm font-semibold">Google Slides</span>
-                    <span class="bg-white px-3 py-1 rounded shadow text-sm font-semibold">StoryJumper</span>
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all p-6">
+                    <div class="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center text-3xl mb-4">💡</div>
+                    <h3 class="font-bold text-lg mb-2">Inventos</h3>
+                    <a href="https://www.si.edu/kids" target="_blank" class="text-blue-600 text-sm hover:underline block mb-2">Smithsonian Kids</a>
+                    <a href="https://www.bbc.co.uk/bitesize/primary" target="_blank" class="text-blue-600 text-sm hover:underline block">BBC Bitesize</a>
                 </div>
             </div>
         </section>
 
-        <!-- SECCIÓN: EVALUACIÓN -->
-        <section id="evaluacion" class="section-card bg-white p-6 md:p-10 rounded-3xl paper-shadow border-t-8 border-pink-400">
+        <!-- SECCIÓN 5: EVALUACIÓN -->
+        <section id="evaluacion" class="section-card bg-white p-8 rounded-3xl shadow-sm border-t-8 border-pink-400">
             <h2 class="text-3xl font-bold text-pink-600 mb-6 flex items-center gap-2">
-                <i data-lucide="clipboard-check" class="w-8 h-8"></i> ¿Cómo serás evaluado?
+                <i data-lucide="check-circle" class="w-8 h-8"></i> Autoevaluación
             </h2>
-            <p class="mb-4">Antes de entregar, revisa esta lista para asegurarte de ganar todos los puntos. ¡Tú puedes!</p>
-
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse rounded-lg overflow-hidden shadow-sm">
+            <div class="overflow-hidden rounded-xl border border-gray-200">
+                <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-pink-500 text-white">
+                            <th class="p-4 w-10">✔</th>
                             <th class="p-4">Criterio</th>
-                            <th class="p-4">Lo que debes lograr</th>
-                            <th class="p-4 text-center">Puntos</th>
+                            <th class="p-4 hidden md:table-cell">Descripción</th>
+                            <th class="p-4 text-center">Pts</th>
                         </tr>
                     </thead>
-                    <tbody class="text-sm md:text-base">
-                        <tr class="bg-pink-50 border-b border-pink-100">
-                            <td class="p-4 font-bold text-pink-900">1. Introducción</td>
-                            <td class="p-4">Presentas el tema de forma bonita, clara y que dé ganas de leer.</td>
-                            <td class="p-4 text-center font-bold">1</td>
+                    <tbody id="rubric-body">
+                        <tr onclick="toggleRubric(this)" class="rubric-row bg-white border-b" data-points="1">
+                            <td class="p-4"><div class="w-6 h-6 border-2 border-gray-300 rounded flex items-center justify-center bg-white"><i data-lucide="check" class="rubric-check w-4 h-4 text-pink-600"></i></div></td>
+                            <td class="p-4 font-bold">Introducción</td>
+                            <td class="p-4 text-sm hidden md:table-cell">Tema claro y motivador.</td>
+                            <td class="p-4 text-center font-bold text-pink-600">1</td>
                         </tr>
-                        <tr class="bg-white border-b border-pink-100">
-                            <td class="p-4 font-bold text-pink-900">2. Tarea (Contenido)</td>
-                            <td class="p-4">Tu pasaporte tiene toda la información y se entiende bien lo que leíste.</td>
-                            <td class="p-4 text-center font-bold">2</td>
+                        <tr onclick="toggleRubric(this)" class="rubric-row bg-white border-b" data-points="2">
+                            <td class="p-4"><div class="w-6 h-6 border-2 border-gray-300 rounded flex items-center justify-center bg-white"><i data-lucide="check" class="rubric-check w-4 h-4 text-pink-600"></i></div></td>
+                            <td class="p-4 font-bold">Contenido</td>
+                            <td class="p-4 text-sm hidden md:table-cell">Datos generales y 5 curiosidades.</td>
+                            <td class="p-4 text-center font-bold text-pink-600">2</td>
                         </tr>
-                        <tr class="bg-pink-50 border-b border-pink-100">
-                            <td class="p-4 font-bold text-pink-900">3. Proceso</td>
-                            <td class="p-4">Se nota que seguiste los pasos y usaste las herramientas digitales.</td>
-                            <td class="p-4 text-center font-bold">3</td>
+                        <tr onclick="toggleRubric(this)" class="rubric-row bg-white border-b" data-points="3">
+                            <td class="p-4"><div class="w-6 h-6 border-2 border-gray-300 rounded flex items-center justify-center bg-white"><i data-lucide="check" class="rubric-check w-4 h-4 text-pink-600"></i></div></td>
+                            <td class="p-4 font-bold">Proceso</td>
+                            <td class="p-4 text-sm hidden md:table-cell">Seguí todos los pasos.</td>
+                            <td class="p-4 text-center font-bold text-pink-600">3</td>
                         </tr>
-                        <tr class="bg-white border-b border-pink-100">
-                            <td class="p-4 font-bold text-pink-900">4. Recursos</td>
-                            <td class="p-4">Usaste información de las páginas confiables que te dimos.</td>
-                            <td class="p-4 text-center font-bold">2</td>
+                        <tr onclick="toggleRubric(this)" class="rubric-row bg-white border-b" data-points="2">
+                            <td class="p-4"><div class="w-6 h-6 border-2 border-gray-300 rounded flex items-center justify-center bg-white"><i data-lucide="check" class="rubric-check w-4 h-4 text-pink-600"></i></div></td>
+                            <td class="p-4 font-bold">Fuentes</td>
+                            <td class="p-4 text-sm hidden md:table-cell">Usé las webs sugeridas.</td>
+                            <td class="p-4 text-center font-bold text-pink-600">2</td>
                         </tr>
-                        <tr class="bg-pink-50 border-b border-pink-100">
-                            <td class="p-4 font-bold text-pink-900">5. Evaluación y Conclusión</td>
-                            <td class="p-4">Incluiste tu reflexión final sobre lo que aprendiste.</td>
-                            <td class="p-4 text-center font-bold">5</td>
+                        <tr onclick="toggleRubric(this)" class="rubric-row bg-white border-b" data-points="5">
+                            <td class="p-4"><div class="w-6 h-6 border-2 border-gray-300 rounded flex items-center justify-center bg-white"><i data-lucide="check" class="rubric-check w-4 h-4 text-pink-600"></i></div></td>
+                            <td class="p-4 font-bold">Reflexión</td>
+                            <td class="p-4 text-sm hidden md:table-cell">Completé la reflexión final.</td>
+                            <td class="p-4 text-center font-bold text-pink-600">5</td>
                         </tr>
-                        <tr class="bg-white border-b border-pink-100">
-                            <td class="p-4 font-bold text-pink-900">6. Diseño</td>
-                            <td class="p-4">Tu trabajo está ordenado, limpio y se ve genial.</td>
-                            <td class="p-4 text-center font-bold">1</td>
-                        </tr>
-                        <tr class="bg-gray-800 text-white font-bold text-lg">
-                            <td class="p-4" colspan="2">TOTAL MÁXIMO</td>
-                            <td class="p-4 text-center">14 pts</td>
+                        <tr onclick="toggleRubric(this)" class="rubric-row bg-white" data-points="1">
+                            <td class="p-4"><div class="w-6 h-6 border-2 border-gray-300 rounded flex items-center justify-center bg-white"><i data-lucide="check" class="rubric-check w-4 h-4 text-pink-600"></i></div></td>
+                            <td class="p-4 font-bold">Diseño</td>
+                            <td class="p-4 text-sm hidden md:table-cell">Trabajo limpio y ordenado.</td>
+                            <td class="p-4 text-center font-bold text-pink-600">1</td>
                         </tr>
                     </tbody>
+                    <tfoot class="bg-gray-50 font-bold text-slate-800">
+                        <tr>
+                            <td colspan="3" class="p-4 text-right">TOTAL:</td>
+                            <td class="p-4 text-center text-xl text-pink-600"><span id="total-score">0</span>/14</td>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </section>
 
-        <!-- SECCIÓN: CONCLUSIÓN -->
-        <section id="conclusion" class="section-card bg-white p-6 md:p-10 rounded-3xl paper-shadow border-t-8 border-blue-400">
-            <h2 class="text-3xl font-bold text-blue-600 mb-6 flex items-center gap-2">
-                <i data-lucide="award" class="w-8 h-8"></i> ¡Fin del Viaje!
+        <!-- SECCIÓN 6: EDITOR DE PASAPORTE (NUEVA VERSIÓN) -->
+        <section id="conclusion" class="section-card bg-white p-8 rounded-3xl shadow-sm border-t-8 border-blue-600">
+            <h2 class="text-3xl font-bold text-blue-800 mb-6 flex items-center gap-2">
+                <i data-lucide="pen-tool" class="w-8 h-8"></i> Editor de Pasaporte
             </h2>
             
-            <div class="bg-blue-50 p-6 rounded-2xl border border-blue-200 text-center">
-                <p class="text-xl mb-4 leading-relaxed">
-                    ¡Felicidades, Viajero! 🎉<br>
-                    Has recorrido caminos digitales para descubrir cómo funcionan los fenómenos, los animales o los inventos.
-                </p>
-                <p class="text-lg mb-6">
-                    Esta experiencia te ha servido para aprender a leer con atención, buscar información real y crear algo nuevo con ella.
-                </p>
-                
-                <hr class="border-blue-200 my-6">
+            <div class="bg-blue-50 p-4 rounded-xl mb-6 text-sm text-blue-800 border border-blue-200">
+                ¡Hola Viajero! Llena este formulario con tus descubrimientos para generar tu Pasaporte Oficial.
+            </div>
 
-                <h3 class="font-bold text-lg text-blue-800 mb-4">Para cerrar tu viaje, responde en tu cuaderno o pasaporte:</h3>
-                <div class="bg-white p-4 rounded-xl shadow-inner inline-block text-left">
-                    <p class="font-medium text-gray-700 italic">"¿Cómo cambió tu forma de buscar y entender información gracias a esta aventura?"</p>
+            <form id="passport-form" class="space-y-6" onsubmit="return false;">
+                
+                <!-- Datos Personales -->
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">Nombre del Explorador:</label>
+                        <input type="text" id="input-name" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none" placeholder="Ej. Juan Pérez">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">Tema de Investigación:</label>
+                        <input type="text" id="input-theme" class="w-full p-3 border rounded-xl bg-gray-100 text-gray-600" readonly placeholder="Selecciona en 'Misión'">
+                    </div>
                 </div>
-            </div>
-            
-            <div class="mt-8 text-center">
-                <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="text-blue-500 hover:text-blue-700 font-bold underline">
-                    Volver al inicio
-                </button>
-            </div>
+
+                <!-- Subida de Imagen -->
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Foto o Dibujo del Tema:</label>
+                    <div class="flex items-center justify-center w-full">
+                        <label for="input-image" class="image-upload-label flex flex-col items-center justify-center w-full h-32 border-2 border-blue-300 border-dashed rounded-xl cursor-pointer bg-blue-50 hover:bg-blue-100">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                <i data-lucide="upload-cloud" class="w-8 h-8 text-blue-500 mb-2"></i>
+                                <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Haz clic para subir</span> tu dibujo</p>
+                                <p class="text-xs text-gray-500">PNG, JPG (Máx. 5MB)</p>
+                            </div>
+                            <input id="input-image" type="file" class="hidden" accept="image/*" onchange="handleImageUpload(event)" />
+                        </label>
+                    </div>
+                    <p id="image-name" class="text-sm text-green-600 mt-2 text-center hidden font-bold">¡Imagen cargada correctamente!</p>
+                </div>
+
+                <!-- Datos Generales -->
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Datos Generales (¿Qué es?):</label>
+                    <textarea id="input-general" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none h-24" placeholder="Describe brevemente qué es tu tema..."></textarea>
+                </div>
+
+                <!-- 5 Datos Curiosos -->
+                <div class="bg-yellow-50 p-6 rounded-xl border border-yellow-200">
+                    <h3 class="font-bold text-yellow-800 mb-4 flex items-center gap-2"><i data-lucide="list"></i> 5 Datos Curiosos:</h3>
+                    <div class="space-y-3">
+                        <input type="text" id="fact-1" class="w-full p-2 border rounded-lg" placeholder="1. Dato curioso...">
+                        <input type="text" id="fact-2" class="w-full p-2 border rounded-lg" placeholder="2. Dato curioso...">
+                        <input type="text" id="fact-3" class="w-full p-2 border rounded-lg" placeholder="3. Dato curioso...">
+                        <input type="text" id="fact-4" class="w-full p-2 border rounded-lg" placeholder="4. Dato curioso...">
+                        <input type="text" id="fact-5" class="w-full p-2 border rounded-lg" placeholder="5. Dato curioso...">
+                    </div>
+                </div>
+
+                <!-- Reflexión -->
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Reflexión Final:</label>
+                    <textarea id="input-reflection" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none h-24" placeholder="¿Qué aprendiste en este viaje?"></textarea>
+                </div>
+
+                <!-- Botón Imprimir -->
+                <div class="text-center pt-4">
+                    <button onclick="printCertificate()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-full shadow-xl transform hover:-translate-y-1 transition inline-flex items-center gap-2 text-xl">
+                        <i data-lucide="printer"></i> IMPRIMIR PASAPORTE
+                    </button>
+                </div>
+            </form>
         </section>
 
     </main>
 
-    <!-- Footer / Créditos -->
-    <footer class="bg-slate-800 text-slate-300 py-8 text-center mt-8">
-        <div class="container mx-auto px-4">
-            <p class="font-bold text-white mb-2">Créditos de la WebQuest</p>
-            <p class="text-sm mb-4">
-                Edwin Jaramillo Laguna | Mariela Justa Villalva Gonzales | Giannina Patricia Hilario Pérez
-            </p>
-            <p class="text-xs text-slate-500">
-                Basado en el proyecto "Viajeros del texto: navegamos información para comprender".<br>
-                Adaptado para Github Pages.
-            </p>
-        </div>
-    </footer>
+    <!-- ÁREA DE IMPRESIÓN: DISEÑO DE PASAPORTE -->
+    <div id="print-area">
+        <div class="passport-layout">
+            
+            <!-- Cabecera del Pasaporte -->
+            <div class="passport-header">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="text-align: left;">
+                        <h1 style="font-size: 28px; font-weight: 900; margin: 0; text-transform: uppercase; letter-spacing: 2px;">PASAPORTE</h1>
+                        <p style="font-size: 14px; opacity: 0.8; margin: 0;">DE INFORMACIÓN DIGITAL</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; font-weight: bold;">
+                            3º GRADO
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <!-- Script para navegación -->
+            <!-- Cuerpo del Pasaporte -->
+            <div class="passport-body">
+                
+                <!-- Columna Izquierda: Foto y Datos Personales -->
+                <div style="border-right: 2px dashed #cbd5e1; padding-right: 20px;">
+                    <!-- Espacio para la foto -->
+                    <div style="width: 100%; aspect-ratio: 1/1; background-color: #f1f5f9; border: 2px solid #94a3b8; border-radius: 10px; margin-bottom: 20px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                        <img id="print-img" src="" alt="Foto del Explorador" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                        <span id="print-img-placeholder" style="color: #94a3b8; font-size: 12px; text-align: center;">FOTO DEL<br>EXPLORADOR</span>
+                    </div>
+
+                    <div style="margin-bottom: 15px;">
+                        <p style="font-size: 10px; color: #64748b; font-weight: bold; text-transform: uppercase; margin-bottom: 2px;">NOMBRE:</p>
+                        <p id="print-name" style="font-size: 16px; font-weight: bold; color: #1e293b; border-bottom: 1px solid #cbd5e1; padding-bottom: 2px;">________</p>
+                    </div>
+
+                    <div style="margin-bottom: 15px;">
+                        <p style="font-size: 10px; color: #64748b; font-weight: bold; text-transform: uppercase; margin-bottom: 2px;">TEMA INVESTIGADO:</p>
+                        <p id="print-theme-display" style="font-size: 16px; font-weight: bold; color: #2563eb; border-bottom: 1px solid #cbd5e1; padding-bottom: 2px;">________</p>
+                    </div>
+
+                    <div style="margin-top: 30px; text-align: center;">
+                        <div style="width: 80px; height: 80px; border: 3px double #ef4444; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; transform: rotate(-10deg); color: #ef4444; font-weight: bold; font-size: 12px; border-style: double;">
+                            MISIÓN<br>CUMPLIDA
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Información Investigada -->
+                <div>
+                    <!-- Datos Generales -->
+                    <div style="margin-bottom: 20px; background: #f8fafc; padding: 10px; border-radius: 8px; border-left: 4px solid #3b82f6;">
+                        <p style="font-size: 12px; font-weight: bold; color: #1e3a8a; margin-bottom: 5px;">DATOS GENERALES:</p>
+                        <p id="print-general" style="font-size: 14px; color: #334155; margin: 0; min-height: 40px;">...</p>
+                    </div>
+
+                    <!-- Datos Curiosos -->
+                    <div style="margin-bottom: 20px;">
+                        <p style="font-size: 12px; font-weight: bold; color: #d97706; margin-bottom: 10px; text-transform: uppercase;">5 DATOS CURIOSOS:</p>
+                        <ul id="print-facts" style="list-style: none; padding: 0; margin: 0; font-size: 13px; color: #334155;">
+                            <li style="margin-bottom: 5px; border-bottom: 1px dotted #cbd5e1; padding-bottom: 2px;">1. </li>
+                            <li style="margin-bottom: 5px; border-bottom: 1px dotted #cbd5e1; padding-bottom: 2px;">2. </li>
+                            <li style="margin-bottom: 5px; border-bottom: 1px dotted #cbd5e1; padding-bottom: 2px;">3. </li>
+                            <li style="margin-bottom: 5px; border-bottom: 1px dotted #cbd5e1; padding-bottom: 2px;">4. </li>
+                            <li style="margin-bottom: 5px; border-bottom: 1px dotted #cbd5e1; padding-bottom: 2px;">5. </li>
+                        </ul>
+                    </div>
+
+                    <!-- Reflexión -->
+                    <div style="margin-bottom: 20px;">
+                        <p style="font-size: 12px; font-weight: bold; color: #059669; margin-bottom: 5px;">REFLEXIÓN FINAL:</p>
+                        <p id="print-reflection" style="font-size: 13px; color: #334155; font-style: italic; min-height: 40px;">...</p>
+                    </div>
+
+                    <!-- Puntaje -->
+                    <div style="text-align: right; font-size: 10px; color: #94a3b8; margin-top: 10px;">
+                        Puntaje Autoevaluación: <span id="print-score" style="font-weight: bold; color: #db2777;">0/14</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pie de página -->
+            <div style="background: #f1f5f9; padding: 10px; text-align: center; border-top: 1px solid #cbd5e1; font-size: 10px; color: #64748b;">
+                WebQuest: "Viajeros del Texto" | Nivel Primaria
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Lógica -->
     <script>
-        // Inicializar iconos de Lucide
         lucide.createIcons();
 
-        function showSection(sectionId) {
-            // Ocultar todas las secciones
-            document.querySelectorAll('.section-card').forEach(el => {
-                el.classList.remove('active');
+        let state = {
+            theme: "",
+            score: 0,
+            uploadedImage: null
+        };
+
+        // Navegación
+        function navTo(sectionId) {
+            document.querySelectorAll('.section-card').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+
+            document.getElementById(sectionId).classList.add('active');
+            const btn = document.getElementById('btn-' + sectionId);
+            if(btn) btn.classList.add('active');
+
+            window.scrollTo({top: 0, behavior: 'smooth'});
+            lucide.createIcons();
+        }
+
+        // Selección de Tema
+        function selectTheme(themeName) {
+            state.theme = themeName;
+            document.querySelectorAll('.theme-opt').forEach(btn => {
+                btn.classList.remove('ring-4', 'ring-green-400', 'ring-blue-400', 'ring-red-400');
+                btn.querySelector('.check-icon').style.opacity = '0';
             });
+
+            // Highlight chosen (si existe el botón en el DOM)
+            const prefix = themeName.split(' ')[0].toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // 'fenomenos'
+            const btnId = 'btn-theme-' + prefix;
+            const activeBtn = document.getElementById(btnId);
             
-            // Quitar clase activa de los botones
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('active');
-                btn.classList.remove('ring-4');
-                btn.classList.remove('ring-white');
-                btn.classList.remove('ring-opacity-50');
-            });
-
-            // Mostrar la sección seleccionada
-            const selectedSection = document.getElementById(sectionId);
-            if(selectedSection) {
-                selectedSection.classList.add('active');
-            }
-
-            // Activar el botón correspondiente (efecto visual)
-            const activeBtn = document.getElementById('btn-' + sectionId);
             if(activeBtn) {
-                activeBtn.classList.add('active');
-                activeBtn.classList.add('ring-4');
-                activeBtn.classList.add('ring-white');
-                activeBtn.classList.add('ring-opacity-50');
+                let ring = 'ring-green-400';
+                if(themeName.includes('Fenómenos')) ring = 'ring-blue-400';
+                if(themeName.includes('Inventos')) ring = 'ring-red-400';
+                activeBtn.classList.add('ring-4', ring);
+                activeBtn.querySelector('.check-icon').style.opacity = '1';
             }
 
-            // Scroll suave al inicio del main en móvil para que no se pierdan
-            if(window.innerWidth < 768) {
-                document.querySelector('main').scrollIntoView({behavior: 'smooth'});
+            // Actualizar input en el editor
+            document.getElementById('input-theme').value = themeName;
+            
+            // Confetti
+            confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+        }
+
+        // Pasos (Checklist)
+        function toggleStep(stepNum) {
+            const card = document.getElementById('step-' + stepNum);
+            const isCompleted = card.classList.contains('completed');
+            
+            if(!isCompleted) {
+                card.classList.add('completed');
+                card.querySelector('.step-check').classList.add('bg-green-500', 'border-green-500');
+                card.querySelector('i').style.opacity = '1';
+            } else {
+                card.classList.remove('completed');
+                card.querySelector('.step-check').classList.remove('bg-green-500', 'border-green-500');
+                card.querySelector('i').style.opacity = '0';
             }
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const total = document.querySelectorAll('.step-card.completed').length;
+            const percent = (total / 5) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+            document.getElementById('progress-text').innerText = total + '/5 Pasos';
+            if(total === 5) confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        }
+
+        // Rúbrica
+        function toggleRubric(row) {
+            row.classList.toggle('selected');
+            let total = 0;
+            document.querySelectorAll('.rubric-row.selected').forEach(r => {
+                total += parseInt(r.getAttribute('data-points') || 0);
+            });
+            state.score = total;
+            document.getElementById('total-score').innerText = total;
+        }
+
+        // Subida de Imagen
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    state.uploadedImage = e.target.result;
+                    document.getElementById('image-name').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Imprimir Pasaporte
+        function printCertificate() {
+            // 1. Obtener valores del formulario
+            const name = document.getElementById('input-name').value || "....................";
+            const theme = document.getElementById('input-theme').value || "....................";
+            const general = document.getElementById('input-general').value || "(Sin datos generales)";
+            const reflection = document.getElementById('input-reflection').value || "(Sin reflexión)";
+            
+            // 2. Asignar al área de impresión
+            document.getElementById('print-name').innerText = name;
+            document.getElementById('print-theme-display').innerText = theme;
+            document.getElementById('print-general').innerText = general;
+            document.getElementById('print-reflection').innerText = reflection;
+            document.getElementById('print-score').innerText = state.score + "/14";
+
+            // 3. Imagen
+            const imgEl = document.getElementById('print-img');
+            const placeholderEl = document.getElementById('print-img-placeholder');
+            if(state.uploadedImage) {
+                imgEl.src = state.uploadedImage;
+                imgEl.style.display = 'block';
+                placeholderEl.style.display = 'none';
+            } else {
+                imgEl.style.display = 'none';
+                placeholderEl.style.display = 'block';
+            }
+
+            // 4. Lista de Curiosidades
+            const factsList = document.getElementById('print-facts');
+            factsList.innerHTML = ''; // Limpiar
+            for(let i=1; i<=5; i++) {
+                const val = document.getElementById('fact-'+i).value;
+                const li = document.createElement('li');
+                li.style.marginBottom = "5px";
+                li.style.borderBottom = "1px dotted #cbd5e1";
+                li.innerText = i + ". " + (val || ".............................................");
+                factsList.appendChild(li);
+            }
+
+            // 5. Imprimir
+            setTimeout(() => window.print(), 300);
         }
     </script>
 </body>
