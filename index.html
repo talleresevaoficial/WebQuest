@@ -93,12 +93,11 @@
             border: none;
             border-bottom: 2px dotted #a3a3a3;
             font-family: 'Fredoka', cursive;
-            color: #64748b; /* Color más grisáceo para indicar inactivo */
+            color: #2563eb;
             font-size: 1.1rem;
             padding: 4px 0;
-            cursor: default; /* Cursor normal, no de texto */
         }
-        .passport-input:focus { outline: none; border-bottom: 2px dotted #a3a3a3; } /* Sin efecto focus */
+        .passport-input:focus { outline: none; border-bottom: 2px solid #2563eb; background-color: #eff6ff; }
         
         .bracket-box {
             border-left: 4px solid #9ca3af;
@@ -113,6 +112,8 @@
             aspect-ratio: 1/1;
             border: 3px solid #e5e7eb;
             border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
             background-size: cover;
             background-position: center;
             display: flex;
@@ -121,10 +122,8 @@
             text-align: center;
             color: #9ca3af;
             overflow: hidden;
-            /* Quitamos cursor pointer y hovers */
-            cursor: default; 
-            background-color: #f8fafc;
         }
+        .photo-upload-zone:hover { border-color: #3b82f6; background-color: #f8fafc; }
 
         .stamp-circle {
             width: 100px;
@@ -143,13 +142,61 @@
 
         /* --- CORRECCIÓN DEFINITIVA DE IMPRESIÓN --- */
         @media print {
-            @page { size: auto; margin: 5mm; }
-            body > *:not(main), nav, header, footer, .section-card > *:not(#passport-visual-editor), .no-print { display: none !important; }
-            body, main, .section-card { background: white !important; margin: 0 !important; padding: 0 !important; width: 100% !important; height: auto !important; overflow: visible !important; display: block !important; }
-            #passport-visual-editor { display: block !important; width: 100% !important; max-width: 100% !important; border: 4px solid #000 !important; box-shadow: none !important; margin: 0 !important; page-break-inside: avoid; }
-            .passport-header { padding: 10px 15px !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            .passport-body-content { display: grid !important; grid-template-columns: 1fr 2fr !important; gap: 15px !important; padding: 15px !important; }
-            .passport-input { font-size: 12pt !important; border-bottom: 1px solid #999 !important; padding: 0 !important; min-height: 0 !important; }
+            @page {
+                size: auto;
+                margin: 5mm;
+            }
+
+            /* Ocultar TODO menos el pasaporte */
+            body > *:not(main),
+            nav, header, footer,
+            .section-card > *:not(#passport-visual-editor),
+            .no-print {
+                display: none !important;
+            }
+
+            /* Resetear contenedores */
+            body, main, .section-card {
+                background: white !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                overflow: visible !important;
+                display: block !important;
+            }
+
+            /* Estilos del Pasaporte para IMPRESIÓN */
+            #passport-visual-editor {
+                display: block !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                border: 4px solid #000 !important;
+                box-shadow: none !important;
+                margin: 0 !important;
+                page-break-inside: avoid;
+            }
+
+            .passport-header {
+                padding: 10px 15px !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            
+            .passport-body-content {
+                display: grid !important;
+                grid-template-columns: 1fr 2fr !important;
+                gap: 15px !important;
+                padding: 15px !important;
+            }
+
+            .passport-input {
+                font-size: 12pt !important;
+                border-bottom: 1px solid #999 !important;
+                padding: 0 !important;
+                min-height: 0 !important;
+            }
+            
             .input-placeholder { display: none !important; }
             textarea.passport-input { height: 3.5rem !important; }
             .photo-upload-zone { border: 2px solid #ccc !important; }
@@ -167,14 +214,19 @@
                 Viajeros del Texto
             </h1>
             <p class="text-xl md:text-2xl font-medium text-blue-50">¡Tu aventura de investigación comienza aquí!</p>
+            
+            <div class="mt-4">
+                <span class="bg-blue-600/50 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide">Nivel: 3er Grado • Primaria</span>
+            </div>
         </div>
     </header>
 
+    <!-- MENU ACTUALIZADO -->
     <nav class="bg-white sticky top-0 z-50 shadow-md border-b border-gray-100">
         <div class="container mx-auto px-2 overflow-x-auto no-scrollbar">
             <div class="flex justify-start md:justify-center space-x-2 p-2 min-w-max">
                 <button onclick="navTo('intro')" id="btn-intro" class="nav-btn active bg-yellow-400 text-yellow-900 px-4 py-2 rounded-xl font-bold flex items-center gap-2">
-                    <i data-lucide="compass" class="w-5 h-5"></i> La Introducción
+                    <i data-lucide="compass" class="w-5 h-5"></i> La introducción
                 </button>
                 <button onclick="navTo('tarea')" id="btn-tarea" class="nav-btn bg-green-400 text-green-900 px-4 py-2 rounded-xl font-bold flex items-center gap-2">
                     <i data-lucide="map" class="w-5 h-5"></i> Tarea
@@ -188,8 +240,11 @@
                 <button onclick="navTo('evaluacion')" id="btn-evaluacion" class="nav-btn bg-pink-400 text-pink-900 px-4 py-2 rounded-xl font-bold flex items-center gap-2">
                     <i data-lucide="check-circle" class="w-5 h-5"></i> Evaluación
                 </button>
-                <button onclick="navTo('conclusion')" id="btn-conclusion" class="nav-btn bg-blue-600 text-white px-4 py-2 rounded-xl font-bold flex items-center gap-2 border-2 border-blue-800">
-                    <i data-lucide="file-text" class="w-5 h-5"></i> VER PASAPORTE
+                <button onclick="navTo('conclusion')" id="btn-conclusion" class="nav-btn bg-teal-400 text-teal-900 px-4 py-2 rounded-xl font-bold flex items-center gap-2">
+                    <i data-lucide="flag" class="w-5 h-5"></i> Conclusión
+                </button>
+                <button onclick="navTo('pasaporte')" id="btn-pasaporte" class="nav-btn bg-blue-600 text-white px-4 py-2 rounded-xl font-bold flex items-center gap-2 border-2 border-blue-800">
+                    <i data-lucide="pen-tool" class="w-5 h-5"></i> PASAPORTE
                 </button>
             </div>
         </div>
@@ -224,7 +279,7 @@
         <section id="tarea" class="section-card bg-white p-8 rounded-3xl shadow-sm border-t-8 border-green-400">
             <div class="text-center mb-10">
                 <h2 class="text-3xl font-bold text-green-600 flex justify-center items-center gap-3">
-                    <i data-lucide="map" class="w-8 h-8"></i> Tu Misión Secreta
+                    <i data-lucide="map" class="w-8 h-8"></i> Tu Misión (Tarea)
                 </h2>
                 <p class="text-slate-500 mt-2">Debes elegir UN tema para investigar y crear tu Pasaporte.</p>
             </div>
@@ -266,22 +321,28 @@
                         <li class="flex items-start gap-3"><i data-lucide="info" class="text-blue-400 mt-1 shrink-0"></i> <span><strong>Datos Generales:</strong> ¿Qué es?</span></li>
                         <li class="flex items-start gap-3"><i data-lucide="star" class="text-blue-400 mt-1 shrink-0"></i> <span><strong>5 Datos Curiosos</strong>.</span></li>
                         <li class="flex items-start gap-3"><i data-lucide="image" class="text-blue-400 mt-1 shrink-0"></i> <span><strong>Un dibujo o foto</strong>.</span></li>
-                        <li class="flex items-start gap-3"><i data-lucide="message-circle" class="text-blue-400 mt-1 shrink-0"></i> <span><strong>Reflexión final</strong>.</span></li>
+                        <li class="flex items-start gap-3"><i data-lucide="message-circle" class="text-blue-400 mt-1 shrink-0"></i> <span><strong>Conclusión final</strong>.</span></li>
                     </ul>
                 </div>
+            </div>
+            
+            <div class="mt-8 flex justify-end">
+                <button onclick="navTo('proceso')" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg shadow transition flex items-center gap-2">
+                    Ver los Pasos <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
             </div>
         </section>
 
         <section id="proceso" class="section-card bg-white p-8 rounded-3xl shadow-sm border-t-8 border-orange-400">
             <h2 class="text-3xl font-bold text-orange-600 mb-6 flex items-center gap-2">
-                <i data-lucide="footprints" class="w-8 h-8"></i> Ruta del Viajero
+                <i data-lucide="footprints" class="w-8 h-8"></i> Proceso (Pasos)
             </h2>
             <div class="space-y-4">
                 <div onclick="toggleStep(1)" id="step-1" class="step-card group cursor-pointer border-2 border-slate-100 rounded-2xl p-4 flex items-center gap-4 hover:border-orange-300 transition bg-white">
                     <div class="step-number w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-lg">1</div>
                     <div class="flex-grow">
                         <h3 class="font-bold text-slate-700">Elección del Tema</h3>
-                        <p class="text-sm text-slate-500">Decide tu investigación en la sección Misión.</p>
+                        <p class="text-sm text-slate-500">Decide tu investigación en la sección Tarea.</p>
                     </div>
                     <div class="step-check w-8 h-8 rounded-full border-2 border-slate-300 flex items-center justify-center"><i data-lucide="check" class="text-white w-5 h-5 opacity-0"></i></div>
                 </div>
@@ -289,7 +350,7 @@
                     <div class="step-number w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-lg">2</div>
                     <div class="flex-grow">
                         <h3 class="font-bold text-slate-700">Exploración Digital</h3>
-                        <p class="text-sm text-slate-500">Investiga en las webs de la Biblioteca.</p>
+                        <p class="text-sm text-slate-500">Investiga en las webs de Recursos.</p>
                     </div>
                     <div class="step-check w-8 h-8 rounded-full border-2 border-slate-300 flex items-center justify-center"><i data-lucide="check" class="text-white w-5 h-5 opacity-0"></i></div>
                 </div>
@@ -312,12 +373,19 @@
                 <div onclick="toggleStep(5)" id="step-5" class="step-card group cursor-pointer border-2 border-slate-100 rounded-2xl p-4 flex items-center gap-4 hover:border-orange-300 transition bg-white">
                     <div class="step-number w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-lg">5</div>
                     <div class="flex-grow">
-                        <h3 class="font-bold text-slate-700">Revisión Final</h3>
-                        <p class="text-sm text-slate-500">Mira el modelo de Pasaporte.</p>
+                        <h3 class="font-bold text-slate-700">Redactar Conclusión</h3>
+                        <p class="text-sm text-slate-500">Escribe tu aprendizaje en la sección Conclusión.</p>
                     </div>
                     <div class="step-check w-8 h-8 rounded-full border-2 border-slate-300 flex items-center justify-center"><i data-lucide="check" class="text-white w-5 h-5 opacity-0"></i></div>
                 </div>
             </div>
+            
+            <div class="mt-8 flex justify-end">
+                <button onclick="navTo('recursos')" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-lg shadow transition flex items-center gap-2">
+                    Ir a Recursos <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </div>
+            
             <div class="mt-8 bg-gray-100 rounded-full h-4 overflow-hidden">
                 <div id="progress-bar" class="bg-orange-400 h-full w-0 transition-all duration-500"></div>
             </div>
@@ -325,7 +393,7 @@
 
         <section id="recursos" class="section-card bg-white p-8 rounded-3xl shadow-sm border-t-8 border-purple-400">
             <h2 class="text-3xl font-bold text-purple-600 mb-6 flex items-center gap-2">
-                <i data-lucide="library" class="w-8 h-8"></i> Recursos
+                <i data-lucide="library" class="w-8 h-8"></i> Recursos (Biblioteca)
             </h2>
             <div class="grid md:grid-cols-3 gap-6">
                 <div class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all p-6">
@@ -346,6 +414,12 @@
                     <a href="https://www.si.edu/kids" target="_blank" class="text-blue-600 text-sm hover:underline block mb-2">Smithsonian Kids</a>
                     <a href="https://www.bbc.co.uk/bitesize/primary" target="_blank" class="text-blue-600 text-sm hover:underline block">BBC Bitesize</a>
                 </div>
+            </div>
+            
+            <div class="mt-8 flex justify-end">
+                <button onclick="navTo('evaluacion')" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-6 rounded-lg shadow transition flex items-center gap-2">
+                    Ir a Evaluación <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
             </div>
         </section>
 
@@ -378,7 +452,7 @@
                         </tr>
                         <tr onclick="toggleRubric(this)" class="rubric-row bg-white border-b" data-points="3">
                             <td class="p-4"><div class="w-6 h-6 border-2 border-gray-300 rounded flex items-center justify-center bg-white"><i data-lucide="check" class="rubric-check w-4 h-4 text-pink-600"></i></div></td>
-                            <td class="p-4 font-bold">Reflexión Final escrita</td>
+                            <td class="p-4 font-bold">Conclusión Final escrita</td>
                             <td class="p-4 text-center font-bold text-pink-600">3</td>
                         </tr>
                         <tr onclick="toggleRubric(this)" class="rubric-row bg-white border-b" data-points="7">
@@ -395,14 +469,51 @@
                     </tfoot>
                 </table>
             </div>
+            
+            <div class="mt-8 flex justify-end">
+                <button onclick="navTo('conclusion')" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-6 rounded-lg shadow transition flex items-center gap-2">
+                    Ir a Conclusión <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </div>
         </section>
 
-        <section id="conclusion" class="section-card">
+        <!-- NUEVA SECCIÓN: CONCLUSIÓN -->
+        <section id="conclusion" class="section-card bg-white p-8 rounded-3xl shadow-sm border-t-8 border-teal-400">
+            <h2 class="text-3xl font-bold text-teal-600 mb-6 flex items-center gap-2">
+                <i data-lucide="flag" class="w-8 h-8"></i> Conclusión del Viaje
+            </h2>
+            
+            <div class="space-y-6 text-lg text-slate-700 leading-relaxed">
+                <p>
+                    Como viajero del texto has recorrido distintos caminos de información digital para descubrir cómo funcionan los fenómenos, animales o inventos que forman parte del mundo real.
+                </p>
+                <p>
+                    Esta experiencia te permitió comprender, comparar y valorar la importancia de leer textos informativos con atención.
+                </p>
+                
+                <div class="bg-teal-50 p-6 rounded-xl border border-teal-200 mt-6">
+                    <h3 class="font-bold text-teal-800 mb-3 text-xl">Para cerrar tu viaje, responde:</h3>
+                    <label for="conclusion-textarea" class="block font-medium text-slate-600 mb-2">
+                        ¿Cómo cambió tu forma de buscar y comprender información gracias a esta aventura digital?
+                    </label>
+                    <textarea id="conclusion-textarea" class="w-full p-4 border-2 border-teal-200 rounded-xl focus:ring-2 focus:ring-teal-400 focus:outline-none h-32 bg-white" placeholder="Escribe tu respuesta aquí..."></textarea>
+                </div>
+
+                <div class="text-right">
+                    <button onclick="navTo('pasaporte')" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:-translate-y-1 transition inline-flex items-center gap-2 text-lg">
+                        Ir a mi Pasaporte <i data-lucide="arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN PASAPORTE (Antigua Conclusión) -->
+        <section id="pasaporte" class="section-card">
             
             <div class="text-center mb-6">
-                <p class="text-blue-600 font-bold uppercase tracking-widest text-sm mb-2">Vista Previa</p>
-                <h2 class="text-3xl font-black text-slate-800">Modelo de Pasaporte</h2>
-                <p class="text-slate-500">Esta es la estructura que deberás completar en tu cuaderno o imprimir.</p>
+                <p class="text-blue-600 font-bold uppercase tracking-widest text-sm mb-2">Editor Interactivo</p>
+                <h2 class="text-3xl font-black text-slate-800">Tu Pasaporte Oficial</h2>
+                <p class="text-slate-500">Rellena los datos faltantes para imprimir.</p>
             </div>
 
             <div id="passport-visual-editor" class="passport-container max-w-4xl mx-auto">
@@ -422,22 +533,24 @@
                     <div class="flex flex-col gap-6 border-r-2 border-dashed border-gray-300 pr-6">
                         
                         <div>
-                            <div class="photo-upload-zone bg-slate-50">
-                                <div class="flex flex-col items-center justify-center p-4">
-                                    <i data-lucide="image" class="w-8 h-8 mb-2 text-slate-300"></i>
-                                    <span class="text-xs font-bold text-slate-300 uppercase leading-tight">Espacio para<br>Foto</span>
+                            <label for="input-file" class="photo-upload-zone bg-slate-50 relative group" id="photo-preview">
+                                <div class="absolute inset-0 flex flex-col items-center justify-center p-4 z-10 transition-opacity duration-300" id="photo-instructions">
+                                    <i data-lucide="camera" class="w-8 h-8 mb-2 text-slate-400"></i>
+                                    <span class="text-xs font-bold text-slate-400 uppercase leading-tight">Foto del<br>Explorador</span>
                                 </div>
-                            </div>
+                                <input type="file" id="input-file" class="hidden" accept="image/*" onchange="previewImage(event)">
+                            </label>
+                            <p class="text-[10px] text-center text-slate-400 mt-1 input-placeholder">(Clic para subir imagen)</p>
                         </div>
 
                         <div>
                             <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1">Nombre:</label>
-                            <input type="text" class="passport-input font-bold" readonly>
+                            <input type="text" class="passport-input font-bold text-slate-800" placeholder="Escribe tu nombre..." id="passport-name">
                         </div>
 
                         <div>
                             <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1">Tema Investigado:</label>
-                            <input type="text" class="passport-input font-bold" readonly id="passport-theme">
+                            <input type="text" class="passport-input font-bold text-blue-600" placeholder="Ej. Los Volcanes" id="passport-theme">
                         </div>
 
                         <div class="mt-auto flex justify-center pt-4">
@@ -454,43 +567,29 @@
                             <h3 class="font-bold text-slate-800 text-sm mb-2 uppercase">Datos Generales:</h3>
                             <div class="bracket-box">
                                 <p class="text-xs text-gray-400 italic mb-1 input-placeholder">(¿Qué es? Breve descripción)</p>
-                                <textarea class="passport-input w-full resize-none h-20 bg-transparent leading-relaxed" readonly></textarea>
+                                <textarea class="passport-input w-full resize-none h-20 bg-transparent leading-relaxed" placeholder="Escribe aquí..."></textarea>
                             </div>
                         </div>
 
                         <div>
                             <h3 class="font-bold text-slate-800 text-sm mb-2 uppercase">5 Datos Curiosos:</h3>
                             <div class="space-y-2">
-                                <div class="flex gap-2 items-baseline">
-                                    <span class="font-bold text-slate-400">1.</span>
-                                    <input type="text" class="passport-input" readonly>
-                                </div>
-                                <div class="flex gap-2 items-baseline">
-                                    <span class="font-bold text-slate-400">2.</span>
-                                    <input type="text" class="passport-input" readonly>
-                                </div>
-                                <div class="flex gap-2 items-baseline">
-                                    <span class="font-bold text-slate-400">3.</span>
-                                    <input type="text" class="passport-input" readonly>
-                                </div>
-                                <div class="flex gap-2 items-baseline">
-                                    <span class="font-bold text-slate-400">4.</span>
-                                    <input type="text" class="passport-input" readonly>
-                                </div>
-                                <div class="flex gap-2 items-baseline">
-                                    <span class="font-bold text-slate-400">5.</span>
-                                    <input type="text" class="passport-input" readonly>
-                                </div>
+                                <div class="flex gap-2 items-baseline"><span class="font-bold text-slate-400">1.</span><input type="text" class="passport-input" placeholder="..."></div>
+                                <div class="flex gap-2 items-baseline"><span class="font-bold text-slate-400">2.</span><input type="text" class="passport-input" placeholder="..."></div>
+                                <div class="flex gap-2 items-baseline"><span class="font-bold text-slate-400">3.</span><input type="text" class="passport-input" placeholder="..."></div>
+                                <div class="flex gap-2 items-baseline"><span class="font-bold text-slate-400">4.</span><input type="text" class="passport-input" placeholder="..."></div>
+                                <div class="flex gap-2 items-baseline"><span class="font-bold text-slate-400">5.</span><input type="text" class="passport-input" placeholder="..."></div>
                             </div>
                         </div>
 
                         <div>
-                            <h3 class="font-bold text-slate-800 text-sm mb-2 uppercase">Reflexión Final:</h3>
-                            <textarea class="passport-input w-full resize-none h-16 bg-transparent italic" readonly></textarea>
+                            <h3 class="font-bold text-slate-800 text-sm mb-2 uppercase">CONCLUSIÓN:</h3>
+                            <!-- Este textarea es solo lectura, muestra lo escrito en la sección anterior -->
+                            <textarea id="passport-conclusion-display" class="passport-input w-full resize-none h-20 bg-transparent italic" placeholder="(Tu conclusión aparecerá aquí...)" readonly></textarea>
                         </div>
 
                         <div class="text-right mt-4 pt-4 border-t border-gray-100">
-                            <p class="text-xs font-bold text-slate-400 uppercase">Puntaje Evaluación: <span id="display-score" class="text-xl text-pink-600 ml-2 font-black">0/14</span></p>
+                            <p class="text-xs font-bold text-slate-400 uppercase">Puntaje Autoevaluación: <span id="display-score" class="text-xl text-pink-600 ml-2 font-black">0/14</span></p>
                         </div>
 
                     </div>
@@ -500,8 +599,14 @@
                     <p class="text-[10px] text-slate-500 uppercase tracking-wider font-bold">WebQuest: "Viajeros del Texto" | Nivel Primaria</p>
                 </div>
             </div>
-            
-            </section>
+
+            <div class="text-center mt-8 space-x-4 no-print">
+                <button onclick="window.print()" class="bg-slate-800 hover:bg-black text-white font-bold py-3 px-8 rounded-full shadow-xl transform hover:-translate-y-1 transition inline-flex items-center gap-2">
+                    <i data-lucide="printer"></i> IMPRIMIR FICHA
+                </button>
+            </div>
+
+        </section>
 
     </main>
 
@@ -509,22 +614,13 @@
         <div class="container mx-auto px-6 text-center">
             <h3 class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Docentes Encargados de la Aplicación</h3>
             <div class="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 text-sm font-semibold text-slate-700">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600"><i data-lucide="user" class="w-4 h-4"></i></div>
-                    <span>Edwin Jaramillo Laguna</span>
-                </div>
-                <div class="hidden md:block text-gray-300">|</div>
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center text-pink-600"><i data-lucide="user" class="w-4 h-4"></i></div>
-                    <span>Mariela Justa Villalva Gonzales</span>
-                </div>
-                <div class="hidden md:block text-gray-300">|</div>
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600"><i data-lucide="user" class="w-4 h-4"></i></div>
-                    <span>Giannina Patricia Hilario Pérez</span>
-                </div>
+                <span>Edwin Jaramillo Laguna</span>
+                <span class="hidden md:block text-gray-300">|</span>
+                <span>Mariela Justa Villalva Gonzales</span>
+                <span class="hidden md:block text-gray-300">|</span>
+                <span>Giannina Patricia Hilario Pérez</span>
             </div>
-            <p class="mt-6 text-xs text-slate-400">© 2025 WebQuest Educativa - Todos los derechos reservados</p>
+            <p class="mt-6 text-xs text-slate-400">© 2024 WebQuest Educativa - Todos los derechos reservados</p>
         </div>
     </footer>
 
@@ -545,11 +641,22 @@
             const btn = document.getElementById('btn-' + sectionId);
             if(btn) btn.classList.add('active');
 
+            // Si navegamos al pasaporte, actualizamos la conclusión
+            if(sectionId === 'pasaporte') {
+                updatePassportConclusion();
+            }
+
             window.scrollTo({top: 0, behavior: 'smooth'});
             lucide.createIcons();
         }
 
-        // Selección de Tema (Ahora solo visual)
+        // Transferir texto de Conclusión a Pasaporte
+        function updatePassportConclusion() {
+            const conclusionText = document.getElementById('conclusion-textarea').value;
+            document.getElementById('passport-conclusion-display').value = conclusionText;
+        }
+
+        // Selección de Tema
         function selectTheme(themeName) {
             state.theme = themeName;
             
@@ -568,7 +675,6 @@
                 activeBtn.querySelector('.check-icon').style.opacity = '1';
             }
 
-            // Actualizar el input readonly del pasaporte
             document.getElementById('passport-theme').value = themeName;
             
             confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
@@ -600,8 +706,22 @@
             document.getElementById('total-score').innerText = total;
             document.getElementById('display-score').innerText = total + "/14";
         }
+
+        // Foto
+        function previewImage(event) {
+            const input = event.target;
+            const preview = document.getElementById('photo-preview');
+            const instructions = document.getElementById('photo-instructions');
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.style.backgroundImage = `url('${e.target.result}')`;
+                    instructions.style.opacity = '0'; 
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
     </script>
 </body>
 </html>
-
-
