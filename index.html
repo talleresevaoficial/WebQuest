@@ -4,16 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebQuest: Viajeros del Texto</title>
-    <!-- Importamos Tailwind CSS -->
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Fuente divertida (Fredoka) -->
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&display=swap" rel="stylesheet">
-    <!-- Iconos Lucide -->
+    
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Confetti para celebraciones -->
+    
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
+        /* --- ESTILOS GENERALES --- */
         body {
             font-family: 'Fredoka', sans-serif;
             background-color: #f0f9ff;
@@ -21,6 +22,7 @@
             background-size: 30px 30px;
         }
         
+        /* Transiciones */
         .section-card {
             display: none;
             opacity: 0;
@@ -33,13 +35,9 @@
             transform: translateY(0);
         }
 
-        .nav-btn {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .nav-btn:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.1);
-        }
+        /* Botones nav */
+        .nav-btn { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .nav-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
         .nav-btn.active {
             transform: scale(1.05);
             box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.2);
@@ -47,99 +45,120 @@
             border-color: rgba(0,0,0,0.1);
         }
 
-        /* Estilos robustos para los pasos (Checklist) */
-        .step-check {
-            transition: all 0.3s ease;
-            border-color: #cbd5e1; /* slate-300 */
-        }
-        /* Cuando el paso está completado */
-        .step-card.completed {
-            background-color: #dcfce7; /* green-100 */
-            border-color: #86efac; /* green-300 */
-        }
-        .step-card.completed .step-number {
-            background-color: #22c55e; /* green-500 */
-            color: white;
-        }
-        .step-card.completed .step-check {
-            background-color: #22c55e; /* green-500 */
-            border-color: #22c55e;
-        }
-        /* Controlar visibilidad del icono SVG independientemente de la etiqueta */
-        .step-check svg {
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .step-card.completed .step-check svg {
-            opacity: 1;
-        }
+        /* Checklist */
+        .step-check { transition: all 0.3s ease; border-color: #cbd5e1; }
+        .step-card.completed { background-color: #dcfce7; border-color: #86efac; }
+        .step-card.completed .step-number { background-color: #22c55e; color: white; }
+        .step-card.completed .step-check { background-color: #22c55e; border-color: #22c55e; }
+        .step-check svg { opacity: 0; transition: opacity 0.3s; }
+        .step-card.completed .step-check svg { opacity: 1; }
         
-        /* Estilos para la rúbrica */
+        /* Rúbrica */
         .rubric-row { cursor: pointer; transition: background-color 0.2s; }
         .rubric-row:hover { background-color: #fce7f3; }
         .rubric-row.selected { background-color: #fbcfe8; border-left: 4px solid #db2777; }
         .rubric-check { opacity: 0; transition: opacity 0.2s; }
         .rubric-row.selected .rubric-check { opacity: 1 !important; }
 
-        /* Estilo para el input de imagen */
-        .image-upload-label {
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .image-upload-label:hover {
-            background-color: #eff6ff;
-            border-color: #3b82f6;
+        /* --- ESTILOS DEL PASAPORTE --- */
+        .passport-container {
+            font-family: 'Montserrat', sans-serif;
+            border: 5px solid #333333;
+            border-radius: 20px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            position: relative;
         }
 
-        /* CONFIGURACIÓN DE IMPRESIÓN */
-        @media print {
-            header, nav, footer, main, .no-print { display: none !important; }
-            body, html { background: white; margin: 0; padding: 0; height: 100%; }
-            
-            #print-area {
-                display: block !important;
-                width: 100%;
-                height: 100%;
-                padding: 20px;
-                box-sizing: border-box;
-            }
-
-            .passport-layout {
-                border: 4px solid #1e3a8a; /* Azul oscuro */
-                border-radius: 20px;
-                background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2393c5fd' fill-opacity='0.1'%3E%3Cpath d='M0 0h20L0 20z'/%3E%3C/g%3E%3C/svg%3E");
-                padding: 0;
-                overflow: hidden;
-                box-shadow: none;
-                width: 100%;
-                max-width: 1000px;
-                margin: 0 auto;
-                page-break-inside: avoid;
-            }
-
-            .passport-header {
-                background-color: #1e3a8a;
-                color: white;
-                padding: 20px;
-                text-align: center;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-            
-            .passport-body {
-                padding: 30px;
-                display: grid;
-                grid-template-columns: 1fr 2fr;
-                gap: 30px;
-            }
+        .passport-header {
+            background-color: #333333;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+
+        .passport-body-content {
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+
+        .passport-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 2px dotted #a3a3a3;
+            font-family: 'Fredoka', cursive;
+            color: #64748b; /* Color más grisáceo para indicar inactivo */
+            font-size: 1.1rem;
+            padding: 4px 0;
+            cursor: default; /* Cursor normal, no de texto */
+        }
+        .passport-input:focus { outline: none; border-bottom: 2px dotted #a3a3a3; } /* Sin efecto focus */
         
-        #print-area { display: none; }
+        .bracket-box {
+            border-left: 4px solid #9ca3af;
+            border-top-left-radius: 15px;
+            border-bottom-left-radius: 15px;
+            padding-left: 15px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+
+        .photo-upload-zone {
+            aspect-ratio: 1/1;
+            border: 3px solid #e5e7eb;
+            border-radius: 15px;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #9ca3af;
+            overflow: hidden;
+            /* Quitamos cursor pointer y hovers */
+            cursor: default; 
+            background-color: #f8fafc;
+        }
+
+        .stamp-circle {
+            width: 100px;
+            height: 100px;
+            border: 4px double #555;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transform: rotate(-15deg);
+            font-weight: 900;
+            color: #555;
+            opacity: 0.8;
+        }
+
+        /* --- CORRECCIÓN DEFINITIVA DE IMPRESIÓN --- */
+        @media print {
+            @page { size: auto; margin: 5mm; }
+            body > *:not(main), nav, header, footer, .section-card > *:not(#passport-visual-editor), .no-print { display: none !important; }
+            body, main, .section-card { background: white !important; margin: 0 !important; padding: 0 !important; width: 100% !important; height: auto !important; overflow: visible !important; display: block !important; }
+            #passport-visual-editor { display: block !important; width: 100% !important; max-width: 100% !important; border: 4px solid #000 !important; box-shadow: none !important; margin: 0 !important; page-break-inside: avoid; }
+            .passport-header { padding: 10px 15px !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .passport-body-content { display: grid !important; grid-template-columns: 1fr 2fr !important; gap: 15px !important; padding: 15px !important; }
+            .passport-input { font-size: 12pt !important; border-bottom: 1px solid #999 !important; padding: 0 !important; min-height: 0 !important; }
+            .input-placeholder { display: none !important; }
+            textarea.passport-input { height: 3.5rem !important; }
+            .photo-upload-zone { border: 2px solid #ccc !important; }
+            .stamp-circle { width: 70px !important; height: 70px !important; font-size: 10px !important; border-width: 2px !important; }
+        }
     </style>
 </head>
 <body class="text-slate-700 min-h-screen flex flex-col">
 
-    <!-- Encabezado -->
     <header class="bg-gradient-to-r from-sky-400 to-blue-500 text-white p-6 shadow-lg border-b-4 border-blue-600 relative overflow-hidden">
         <div class="absolute top-4 left-4 text-4xl animate-bounce" style="animation-duration: 3s;">🌍</div>
         <div class="absolute bottom-4 right-10 text-4xl animate-bounce" style="animation-duration: 4s;">🚀</div>
@@ -148,27 +167,9 @@
                 Viajeros del Texto
             </h1>
             <p class="text-xl md:text-2xl font-medium text-blue-50">¡Tu aventura de investigación comienza aquí!</p>
-            
-            <div class="mt-6 p-4 bg-white/10 rounded-xl backdrop-blur-sm border border-white/20 inline-block">
-                <p class="text-sm font-light uppercase tracking-widest mb-1 opacity-90">Docentes Creadores:</p>
-                <div class="flex flex-col md:flex-row gap-2 md:gap-6 text-sm md:text-base font-semibold">
-                    <span>Edwin Jaramillo Laguna</span>
-                    <span class="hidden md:inline">•</span>
-                    <span>Mariela Justa Villalva Gonzales</span>
-                    <span class="hidden md:inline">•</span>
-                    <span>Giannina Patricia Hilario Pérez</span>
-                </div>
-            </div>
-
-            <div class="mt-4 block">
-                <div class="inline-block bg-white/20 backdrop-blur-sm px-4 py-1 rounded-full text-sm font-bold border border-white/30">
-                    Nivel: 3er Grado • Primaria
-                </div>
-            </div>
         </div>
     </header>
 
-    <!-- Navegación -->
     <nav class="bg-white sticky top-0 z-50 shadow-md border-b border-gray-100">
         <div class="container mx-auto px-2 overflow-x-auto no-scrollbar">
             <div class="flex justify-start md:justify-center space-x-2 p-2 min-w-max">
@@ -187,17 +188,15 @@
                 <button onclick="navTo('evaluacion')" id="btn-evaluacion" class="nav-btn bg-pink-400 text-pink-900 px-4 py-2 rounded-xl font-bold flex items-center gap-2">
                     <i data-lucide="check-circle" class="w-5 h-5"></i> Revisión
                 </button>
-                <button onclick="navTo('conclusion')" id="btn-conclusion" class="nav-btn bg-blue-400 text-blue-900 px-4 py-2 rounded-xl font-bold flex items-center gap-2">
-                    <i data-lucide="pen-tool" class="w-5 h-5"></i> Crear Pasaporte
+                <button onclick="navTo('conclusion')" id="btn-conclusion" class="nav-btn bg-blue-600 text-white px-4 py-2 rounded-xl font-bold flex items-center gap-2 border-2 border-blue-800">
+                    <i data-lucide="file-text" class="w-5 h-5"></i> VER PASAPORTE
                 </button>
             </div>
         </div>
     </nav>
 
-    <!-- Contenido Principal -->
     <main class="container mx-auto p-4 md:p-6 flex-grow max-w-5xl">
 
-        <!-- SECCIÓN 1: INTRODUCCIÓN -->
         <section id="intro" class="section-card active bg-white p-8 rounded-3xl shadow-sm border-2 border-yellow-100">
             <div class="flex flex-col md:flex-row items-center gap-10">
                 <div class="md:w-3/5 space-y-6">
@@ -210,7 +209,7 @@
                     </p>
                     <div class="bg-sky-50 p-6 rounded-2xl border-l-8 border-sky-400">
                         <h3 class="font-bold text-sky-800 text-xl mb-2">🎯 Tu Objetivo:</h3>
-                        <p class="text-sky-900">Convertirte en un experto investigador y crear tu propio <strong>"Pasaporte de Información"</strong> con todo lo que descubras.</p>
+                        <p class="text-sky-900">Convertirte en un experto investigador y llenar tu propio <strong>"Pasaporte de Información"</strong> con todo lo que descubras.</p>
                     </div>
                     <button onclick="navTo('tarea')" class="bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-bold py-3 px-8 rounded-full text-lg shadow-lg transform hover:-translate-y-1 transition flex items-center gap-2">
                         ¡Acepto el reto! <i data-lucide="arrow-right"></i>
@@ -222,7 +221,6 @@
             </div>
         </section>
 
-        <!-- SECCIÓN 2: TAREA -->
         <section id="tarea" class="section-card bg-white p-8 rounded-3xl shadow-sm border-t-8 border-green-400">
             <div class="text-center mb-10">
                 <h2 class="text-3xl font-bold text-green-600 flex justify-center items-center gap-3">
@@ -230,13 +228,11 @@
                 </h2>
                 <p class="text-slate-500 mt-2">Debes elegir UN tema para investigar y crear tu Pasaporte.</p>
             </div>
-
             <div class="grid md:grid-cols-2 gap-8 items-start">
                 <div class="bg-green-50 p-6 rounded-2xl border-2 border-green-200 shadow-sm">
                     <h3 class="text-xl font-bold text-green-800 mb-4">1. Elige tu destino:</h3>
-                    
                     <div class="space-y-3" id="theme-selector">
-                        <button onclick="selectTheme('Animales')" id="btn-theme-animales" class="theme-opt w-full text-left p-4 rounded-xl bg-white border-2 border-transparent hover:border-green-300 shadow-sm transition flex items-center gap-4 group">
+                        <button onclick="selectTheme('Animales Asombrosos')" id="btn-theme-animales" class="theme-opt w-full text-left p-4 rounded-xl bg-white border-2 border-transparent hover:border-green-300 shadow-sm transition flex items-center gap-4 group">
                             <span class="text-3xl bg-green-100 p-2 rounded-lg">🦁</span>
                             <div>
                                 <h4 class="font-bold text-gray-700 text-lg group-hover:text-green-600">Animales Asombrosos</h4>
@@ -252,7 +248,7 @@
                             </div>
                             <i data-lucide="check-circle" class="ml-auto w-6 h-6 text-blue-500 opacity-0 transform scale-0 transition-all check-icon"></i>
                         </button>
-                        <button onclick="selectTheme('Inventos')" id="btn-theme-inventos" class="theme-opt w-full text-left p-4 rounded-xl bg-white border-2 border-transparent hover:border-red-300 shadow-sm transition flex items-center gap-4 group">
+                        <button onclick="selectTheme('Grandes Inventos')" id="btn-theme-inventos" class="theme-opt w-full text-left p-4 rounded-xl bg-white border-2 border-transparent hover:border-red-300 shadow-sm transition flex items-center gap-4 group">
                             <span class="text-3xl bg-red-100 p-2 rounded-lg">💡</span>
                             <div>
                                 <h4 class="font-bold text-gray-700 text-lg group-hover:text-red-600">Grandes Inventos</h4>
@@ -262,7 +258,6 @@
                         </button>
                     </div>
                 </div>
-
                 <div class="bg-white p-6 rounded-2xl border-2 border-slate-100 relative">
                     <h3 class="text-xl font-bold text-slate-700 mb-4">2. ¿Qué debe tener tu Pasaporte?</h3>
                     <ul class="space-y-3 text-sm md:text-base">
@@ -275,83 +270,59 @@
                     </ul>
                 </div>
             </div>
-            
-            <div class="mt-8 flex justify-end">
-                <button onclick="navTo('proceso')" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg shadow transition flex items-center gap-2">
-                    Ver los Pasos <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                </button>
-            </div>
         </section>
 
-        <!-- SECCIÓN 3: PROCESO -->
         <section id="proceso" class="section-card bg-white p-8 rounded-3xl shadow-sm border-t-8 border-orange-400">
             <h2 class="text-3xl font-bold text-orange-600 mb-6 flex items-center gap-2">
                 <i data-lucide="footprints" class="w-8 h-8"></i> Ruta del Viajero
             </h2>
             <div class="space-y-4">
-                <!-- Paso 1 -->
                 <div onclick="toggleStep(1)" id="step-1" class="step-card group cursor-pointer border-2 border-slate-100 rounded-2xl p-4 flex items-center gap-4 hover:border-orange-300 transition bg-white">
                     <div class="step-number w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-lg">1</div>
                     <div class="flex-grow">
                         <h3 class="font-bold text-slate-700">Elección del Tema</h3>
                         <p class="text-sm text-slate-500">Decide tu investigación en la sección Misión.</p>
                     </div>
-                    <div class="step-check w-8 h-8 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                        <i data-lucide="check" class="text-white w-5 h-5 opacity-0"></i>
-                    </div>
+                    <div class="step-check w-8 h-8 rounded-full border-2 border-slate-300 flex items-center justify-center"><i data-lucide="check" class="text-white w-5 h-5 opacity-0"></i></div>
                 </div>
-                <!-- Paso 2 -->
                 <div onclick="toggleStep(2)" id="step-2" class="step-card group cursor-pointer border-2 border-slate-100 rounded-2xl p-4 flex items-center gap-4 hover:border-orange-300 transition bg-white">
                     <div class="step-number w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-lg">2</div>
                     <div class="flex-grow">
                         <h3 class="font-bold text-slate-700">Exploración Digital</h3>
-                        <p class="text-sm text-slate-500">Lee los artículos en la sección Biblioteca.</p>
+                        <p class="text-sm text-slate-500">Investiga en las webs de la Biblioteca.</p>
                     </div>
-                    <div class="step-check w-8 h-8 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                        <i data-lucide="check" class="text-white w-5 h-5 opacity-0"></i>
-                    </div>
+                    <div class="step-check w-8 h-8 rounded-full border-2 border-slate-300 flex items-center justify-center"><i data-lucide="check" class="text-white w-5 h-5 opacity-0"></i></div>
                 </div>
-                <!-- Paso 3 -->
                 <div onclick="toggleStep(3)" id="step-3" class="step-card group cursor-pointer border-2 border-slate-100 rounded-2xl p-4 flex items-center gap-4 hover:border-orange-300 transition bg-white">
                     <div class="step-number w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-lg">3</div>
                     <div class="flex-grow">
                         <h3 class="font-bold text-slate-700">Toma de Notas</h3>
-                        <p class="text-sm text-slate-500">Anota los 5 datos curiosos en tu cuaderno.</p>
+                        <p class="text-sm text-slate-500">Anota los 5 datos más curiosos.</p>
                     </div>
-                    <div class="step-check w-8 h-8 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                        <i data-lucide="check" class="text-white w-5 h-5 opacity-0"></i>
-                    </div>
+                    <div class="step-check w-8 h-8 rounded-full border-2 border-slate-300 flex items-center justify-center"><i data-lucide="check" class="text-white w-5 h-5 opacity-0"></i></div>
                 </div>
-                 <!-- Paso 4 -->
-                 <div onclick="toggleStep(4)" id="step-4" class="step-card group cursor-pointer border-2 border-slate-100 rounded-2xl p-4 flex items-center gap-4 hover:border-orange-300 transition bg-white">
+                <div onclick="toggleStep(4)" id="step-4" class="step-card group cursor-pointer border-2 border-slate-100 rounded-2xl p-4 flex items-center gap-4 hover:border-orange-300 transition bg-white">
                     <div class="step-number w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-lg">4</div>
                     <div class="flex-grow">
-                        <h3 class="font-bold text-slate-700">Busca una Imagen</h3>
-                        <p class="text-sm text-slate-500">Consigue una foto o haz un dibujo de tu tema.</p>
+                        <h3 class="font-bold text-slate-700">Imagen del Explorador</h3>
+                        <p class="text-sm text-slate-500">Busca una foto genial de tu tema.</p>
                     </div>
-                    <div class="step-check w-8 h-8 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                        <i data-lucide="check" class="text-white w-5 h-5 opacity-0"></i>
-                    </div>
+                    <div class="step-check w-8 h-8 rounded-full border-2 border-slate-300 flex items-center justify-center"><i data-lucide="check" class="text-white w-5 h-5 opacity-0"></i></div>
                 </div>
-                 <!-- Paso 5 -->
-                 <div onclick="toggleStep(5)" id="step-5" class="step-card group cursor-pointer border-2 border-slate-100 rounded-2xl p-4 flex items-center gap-4 hover:border-orange-300 transition bg-white">
+                <div onclick="toggleStep(5)" id="step-5" class="step-card group cursor-pointer border-2 border-slate-100 rounded-2xl p-4 flex items-center gap-4 hover:border-orange-300 transition bg-white">
                     <div class="step-number w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-lg">5</div>
                     <div class="flex-grow">
-                        <h3 class="font-bold text-slate-700">Crear Pasaporte</h3>
-                        <p class="text-sm text-slate-500">Ve a "Crear Pasaporte", llena los datos e imprime.</p>
+                        <h3 class="font-bold text-slate-700">Revisión Final</h3>
+                        <p class="text-sm text-slate-500">Mira el modelo de Pasaporte.</p>
                     </div>
-                    <div class="step-check w-8 h-8 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                        <i data-lucide="check" class="text-white w-5 h-5 opacity-0"></i>
-                    </div>
+                    <div class="step-check w-8 h-8 rounded-full border-2 border-slate-300 flex items-center justify-center"><i data-lucide="check" class="text-white w-5 h-5 opacity-0"></i></div>
                 </div>
             </div>
             <div class="mt-8 bg-gray-100 rounded-full h-4 overflow-hidden">
                 <div id="progress-bar" class="bg-orange-400 h-full w-0 transition-all duration-500"></div>
             </div>
-            <p class="text-center text-sm text-gray-500 mt-2">Progreso: <span id="progress-text">0/5</span></p>
         </section>
 
-        <!-- SECCIÓN 4: RECURSOS -->
         <section id="recursos" class="section-card bg-white p-8 rounded-3xl shadow-sm border-t-8 border-purple-400">
             <h2 class="text-3xl font-bold text-purple-600 mb-6 flex items-center gap-2">
                 <i data-lucide="library" class="w-8 h-8"></i> Biblioteca Digital
@@ -378,62 +349,47 @@
             </div>
         </section>
 
-        <!-- SECCIÓN 5: EVALUACIÓN -->
         <section id="evaluacion" class="section-card bg-white p-8 rounded-3xl shadow-sm border-t-8 border-pink-400">
             <h2 class="text-3xl font-bold text-pink-600 mb-6 flex items-center gap-2">
                 <i data-lucide="check-circle" class="w-8 h-8"></i> Autoevaluación
             </h2>
+            <div class="bg-pink-50 p-4 mb-4 rounded-lg text-sm text-pink-800 border border-pink-200">
+                Selecciona las casillas si cumpliste con los criterios. Tu puntaje se mostrará automáticamente en el pasaporte.
+            </div>
             <div class="overflow-hidden rounded-xl border border-gray-200">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-pink-500 text-white">
                             <th class="p-4 w-10">✔</th>
                             <th class="p-4">Criterio</th>
-                            <th class="p-4 hidden md:table-cell">Descripción</th>
                             <th class="p-4 text-center">Pts</th>
                         </tr>
                     </thead>
                     <tbody id="rubric-body">
                         <tr onclick="toggleRubric(this)" class="rubric-row bg-white border-b" data-points="1">
                             <td class="p-4"><div class="w-6 h-6 border-2 border-gray-300 rounded flex items-center justify-center bg-white"><i data-lucide="check" class="rubric-check w-4 h-4 text-pink-600"></i></div></td>
-                            <td class="p-4 font-bold">Introducción</td>
-                            <td class="p-4 text-sm hidden md:table-cell">Tema claro y motivador.</td>
+                            <td class="p-4 font-bold">Introducción motivadora</td>
                             <td class="p-4 text-center font-bold text-pink-600">1</td>
-                        </tr>
-                        <tr onclick="toggleRubric(this)" class="rubric-row bg-white border-b" data-points="2">
-                            <td class="p-4"><div class="w-6 h-6 border-2 border-gray-300 rounded flex items-center justify-center bg-white"><i data-lucide="check" class="rubric-check w-4 h-4 text-pink-600"></i></div></td>
-                            <td class="p-4 font-bold">Contenido</td>
-                            <td class="p-4 text-sm hidden md:table-cell">Datos generales y 5 curiosidades.</td>
-                            <td class="p-4 text-center font-bold text-pink-600">2</td>
                         </tr>
                         <tr onclick="toggleRubric(this)" class="rubric-row bg-white border-b" data-points="3">
                             <td class="p-4"><div class="w-6 h-6 border-2 border-gray-300 rounded flex items-center justify-center bg-white"><i data-lucide="check" class="rubric-check w-4 h-4 text-pink-600"></i></div></td>
-                            <td class="p-4 font-bold">Proceso</td>
-                            <td class="p-4 text-sm hidden md:table-cell">Seguí todos los pasos.</td>
+                            <td class="p-4 font-bold">Contenido Completo (Datos generales y curiosos)</td>
                             <td class="p-4 text-center font-bold text-pink-600">3</td>
                         </tr>
-                        <tr onclick="toggleRubric(this)" class="rubric-row bg-white border-b" data-points="2">
+                        <tr onclick="toggleRubric(this)" class="rubric-row bg-white border-b" data-points="3">
                             <td class="p-4"><div class="w-6 h-6 border-2 border-gray-300 rounded flex items-center justify-center bg-white"><i data-lucide="check" class="rubric-check w-4 h-4 text-pink-600"></i></div></td>
-                            <td class="p-4 font-bold">Fuentes</td>
-                            <td class="p-4 text-sm hidden md:table-cell">Usé las webs sugeridas.</td>
-                            <td class="p-4 text-center font-bold text-pink-600">2</td>
+                            <td class="p-4 font-bold">Reflexión Final escrita</td>
+                            <td class="p-4 text-center font-bold text-pink-600">3</td>
                         </tr>
-                        <tr onclick="toggleRubric(this)" class="rubric-row bg-white border-b" data-points="5">
+                        <tr onclick="toggleRubric(this)" class="rubric-row bg-white border-b" data-points="7">
                             <td class="p-4"><div class="w-6 h-6 border-2 border-gray-300 rounded flex items-center justify-center bg-white"><i data-lucide="check" class="rubric-check w-4 h-4 text-pink-600"></i></div></td>
-                            <td class="p-4 font-bold">Reflexión</td>
-                            <td class="p-4 text-sm hidden md:table-cell">Completé la reflexión final.</td>
-                            <td class="p-4 text-center font-bold text-pink-600">5</td>
-                        </tr>
-                        <tr onclick="toggleRubric(this)" class="rubric-row bg-white" data-points="1">
-                            <td class="p-4"><div class="w-6 h-6 border-2 border-gray-300 rounded flex items-center justify-center bg-white"><i data-lucide="check" class="rubric-check w-4 h-4 text-pink-600"></i></div></td>
-                            <td class="p-4 font-bold">Diseño</td>
-                            <td class="p-4 text-sm hidden md:table-cell">Trabajo limpio y ordenado.</td>
-                            <td class="p-4 text-center font-bold text-pink-600">1</td>
+                            <td class="p-4 font-bold">Esfuerzo y Creatividad</td>
+                            <td class="p-4 text-center font-bold text-pink-600">7</td>
                         </tr>
                     </tbody>
                     <tfoot class="bg-gray-50 font-bold text-slate-800">
                         <tr>
-                            <td colspan="3" class="p-4 text-right">TOTAL:</td>
+                            <td colspan="2" class="p-4 text-right">NOTA TOTAL:</td>
                             <td class="p-4 text-center text-xl text-pink-600"><span id="total-score">0</span>/14</td>
                         </tr>
                     </tfoot>
@@ -441,176 +397,143 @@
             </div>
         </section>
 
-        <!-- SECCIÓN 6: EDITOR DE PASAPORTE (NUEVA VERSIÓN) -->
-        <section id="conclusion" class="section-card bg-white p-8 rounded-3xl shadow-sm border-t-8 border-blue-600">
-            <h2 class="text-3xl font-bold text-blue-800 mb-6 flex items-center gap-2">
-                <i data-lucide="pen-tool" class="w-8 h-8"></i> Editor de Pasaporte
-            </h2>
+        <section id="conclusion" class="section-card">
             
-            <div class="bg-blue-50 p-4 rounded-xl mb-6 text-sm text-blue-800 border border-blue-200">
-                ¡Hola Viajero! Llena este formulario con tus descubrimientos para generar tu Pasaporte Oficial.
+            <div class="text-center mb-6">
+                <p class="text-blue-600 font-bold uppercase tracking-widest text-sm mb-2">Vista Previa</p>
+                <h2 class="text-3xl font-black text-slate-800">Modelo de Pasaporte</h2>
+                <p class="text-slate-500">Esta es la estructura que deberás completar en tu cuaderno o imprimir.</p>
             </div>
 
-            <form id="passport-form" class="space-y-6" onsubmit="return false;">
+            <div id="passport-visual-editor" class="passport-container max-w-4xl mx-auto">
                 
-                <!-- Datos Personales -->
-                <div class="grid md:grid-cols-2 gap-6">
+                <div class="passport-header">
                     <div>
-                        <label class="block text-gray-700 font-bold mb-2">Nombre del Explorador:</label>
-                        <input type="text" id="input-name" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none" placeholder="Ej. Juan Pérez">
+                        <h2 class="text-3xl font-black uppercase tracking-widest leading-none">Pasaporte</h2>
+                        <p class="text-xs uppercase tracking-wider opacity-80">De información digital</p>
                     </div>
-                    <div>
-                        <label class="block text-gray-700 font-bold mb-2">Tema de Investigación:</label>
-                        <input type="text" id="input-theme" class="w-full p-3 border rounded-xl bg-gray-100 text-gray-600" readonly placeholder="Selecciona en 'Misión'">
+                    <div class="bg-white/20 px-4 py-1 rounded-full font-bold text-sm border border-white/30 backdrop-blur-sm">
+                        3° GRADO
                     </div>
                 </div>
 
-                <!-- Subida de Imagen -->
-                <div>
-                    <label class="block text-gray-700 font-bold mb-2">Foto o Dibujo del Tema:</label>
-                    <div class="flex items-center justify-center w-full">
-                        <label for="input-image" class="image-upload-label flex flex-col items-center justify-center w-full h-32 border-2 border-blue-300 border-dashed rounded-xl cursor-pointer bg-blue-50 hover:bg-blue-100">
-                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                <i data-lucide="upload-cloud" class="w-8 h-8 text-blue-500 mb-2"></i>
-                                <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Haz clic para subir</span> tu dibujo</p>
-                                <p class="text-xs text-gray-500">PNG, JPG (Máx. 5MB)</p>
+                <div class="passport-body-content">
+                    
+                    <div class="flex flex-col gap-6 border-r-2 border-dashed border-gray-300 pr-6">
+                        
+                        <div>
+                            <div class="photo-upload-zone bg-slate-50">
+                                <div class="flex flex-col items-center justify-center p-4">
+                                    <i data-lucide="image" class="w-8 h-8 mb-2 text-slate-300"></i>
+                                    <span class="text-xs font-bold text-slate-300 uppercase leading-tight">Espacio para<br>Foto</span>
+                                </div>
                             </div>
-                            <input id="input-image" type="file" class="hidden" accept="image/*" onchange="handleImageUpload(event)" />
-                        </label>
+                        </div>
+
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1">Nombre:</label>
+                            <input type="text" class="passport-input font-bold" readonly>
+                        </div>
+
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1">Tema Investigado:</label>
+                            <input type="text" class="passport-input font-bold" readonly id="passport-theme">
+                        </div>
+
+                        <div class="mt-auto flex justify-center pt-4">
+                            <div class="stamp-circle text-xs font-black uppercase border-double border-4 border-red-400 text-red-400 transform -rotate-12">
+                                Misión<br>Cumplida
+                            </div>
+                        </div>
+
                     </div>
-                    <p id="image-name" class="text-sm text-green-600 mt-2 text-center hidden font-bold">¡Imagen cargada correctamente!</p>
-                </div>
 
-                <!-- Datos Generales -->
-                <div>
-                    <label class="block text-gray-700 font-bold mb-2">Datos Generales (¿Qué es?):</label>
-                    <textarea id="input-general" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none h-24" placeholder="Describe brevemente qué es tu tema..."></textarea>
-                </div>
+                    <div class="space-y-6">
+                        
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-sm mb-2 uppercase">Datos Generales:</h3>
+                            <div class="bracket-box">
+                                <p class="text-xs text-gray-400 italic mb-1 input-placeholder">(¿Qué es? Breve descripción)</p>
+                                <textarea class="passport-input w-full resize-none h-20 bg-transparent leading-relaxed" readonly></textarea>
+                            </div>
+                        </div>
 
-                <!-- 5 Datos Curiosos -->
-                <div class="bg-yellow-50 p-6 rounded-xl border border-yellow-200">
-                    <h3 class="font-bold text-yellow-800 mb-4 flex items-center gap-2"><i data-lucide="list"></i> 5 Datos Curiosos:</h3>
-                    <div class="space-y-3">
-                        <input type="text" id="fact-1" class="w-full p-2 border rounded-lg" placeholder="1. Dato curioso...">
-                        <input type="text" id="fact-2" class="w-full p-2 border rounded-lg" placeholder="2. Dato curioso...">
-                        <input type="text" id="fact-3" class="w-full p-2 border rounded-lg" placeholder="3. Dato curioso...">
-                        <input type="text" id="fact-4" class="w-full p-2 border rounded-lg" placeholder="4. Dato curioso...">
-                        <input type="text" id="fact-5" class="w-full p-2 border rounded-lg" placeholder="5. Dato curioso...">
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-sm mb-2 uppercase">5 Datos Curiosos:</h3>
+                            <div class="space-y-2">
+                                <div class="flex gap-2 items-baseline">
+                                    <span class="font-bold text-slate-400">1.</span>
+                                    <input type="text" class="passport-input" readonly>
+                                </div>
+                                <div class="flex gap-2 items-baseline">
+                                    <span class="font-bold text-slate-400">2.</span>
+                                    <input type="text" class="passport-input" readonly>
+                                </div>
+                                <div class="flex gap-2 items-baseline">
+                                    <span class="font-bold text-slate-400">3.</span>
+                                    <input type="text" class="passport-input" readonly>
+                                </div>
+                                <div class="flex gap-2 items-baseline">
+                                    <span class="font-bold text-slate-400">4.</span>
+                                    <input type="text" class="passport-input" readonly>
+                                </div>
+                                <div class="flex gap-2 items-baseline">
+                                    <span class="font-bold text-slate-400">5.</span>
+                                    <input type="text" class="passport-input" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-sm mb-2 uppercase">Reflexión Final:</h3>
+                            <textarea class="passport-input w-full resize-none h-16 bg-transparent italic" readonly></textarea>
+                        </div>
+
+                        <div class="text-right mt-4 pt-4 border-t border-gray-100">
+                            <p class="text-xs font-bold text-slate-400 uppercase">Puntaje Autoevaluación: <span id="display-score" class="text-xl text-pink-600 ml-2 font-black">0/14</span></p>
+                        </div>
+
                     </div>
                 </div>
 
-                <!-- Reflexión -->
-                <div>
-                    <label class="block text-gray-700 font-bold mb-2">Reflexión Final:</label>
-                    <textarea id="input-reflection" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 focus:outline-none h-24" placeholder="¿Qué aprendiste en este viaje?"></textarea>
+                <div class="bg-slate-100 py-2 text-center border-t border-slate-200">
+                    <p class="text-[10px] text-slate-500 uppercase tracking-wider font-bold">WebQuest: "Viajeros del Texto" | Nivel Primaria</p>
                 </div>
-
-                <!-- Botón Imprimir -->
-                <div class="text-center pt-4">
-                    <button onclick="printCertificate()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-full shadow-xl transform hover:-translate-y-1 transition inline-flex items-center gap-2 text-xl">
-                        <i data-lucide="printer"></i> IMPRIMIR PASAPORTE
-                    </button>
-                </div>
-            </form>
-        </section>
+            </div>
+            
+            </section>
 
     </main>
 
-    <!-- ÁREA DE IMPRESIÓN: DISEÑO DE PASAPORTE -->
-    <div id="print-area">
-        <div class="passport-layout">
-            
-            <!-- Cabecera del Pasaporte -->
-            <div class="passport-header">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div style="text-align: left;">
-                        <h1 style="font-size: 28px; font-weight: 900; margin: 0; text-transform: uppercase; letter-spacing: 2px;">PASAPORTE</h1>
-                        <p style="font-size: 14px; opacity: 0.8; margin: 0;">DE INFORMACIÓN DIGITAL</p>
-                    </div>
-                    <div style="text-align: right;">
-                        <div style="background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; font-weight: bold;">
-                            3º GRADO
-                        </div>
-                    </div>
+    <footer class="bg-white border-t border-gray-200 mt-12 py-8 no-print">
+        <div class="container mx-auto px-6 text-center">
+            <h3 class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Docentes Encargados de la Aplicación</h3>
+            <div class="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 text-sm font-semibold text-slate-700">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600"><i data-lucide="user" class="w-4 h-4"></i></div>
+                    <span>Edwin Jaramillo Laguna</span>
+                </div>
+                <div class="hidden md:block text-gray-300">|</div>
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center text-pink-600"><i data-lucide="user" class="w-4 h-4"></i></div>
+                    <span>Mariela Justa Villalva Gonzales</span>
+                </div>
+                <div class="hidden md:block text-gray-300">|</div>
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600"><i data-lucide="user" class="w-4 h-4"></i></div>
+                    <span>Giannina Patricia Hilario Pérez</span>
                 </div>
             </div>
-
-            <!-- Cuerpo del Pasaporte -->
-            <div class="passport-body">
-                
-                <!-- Columna Izquierda: Foto y Datos Personales -->
-                <div style="border-right: 2px dashed #cbd5e1; padding-right: 20px;">
-                    <!-- Espacio para la foto -->
-                    <div style="width: 100%; aspect-ratio: 1/1; background-color: #f1f5f9; border: 2px solid #94a3b8; border-radius: 10px; margin-bottom: 20px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                        <img id="print-img" src="" alt="Foto del Explorador" style="width: 100%; height: 100%; object-fit: cover; display: none;">
-                        <span id="print-img-placeholder" style="color: #94a3b8; font-size: 12px; text-align: center;">FOTO DEL<br>EXPLORADOR</span>
-                    </div>
-
-                    <div style="margin-bottom: 15px;">
-                        <p style="font-size: 10px; color: #64748b; font-weight: bold; text-transform: uppercase; margin-bottom: 2px;">NOMBRE:</p>
-                        <p id="print-name" style="font-size: 16px; font-weight: bold; color: #1e293b; border-bottom: 1px solid #cbd5e1; padding-bottom: 2px;">________</p>
-                    </div>
-
-                    <div style="margin-bottom: 15px;">
-                        <p style="font-size: 10px; color: #64748b; font-weight: bold; text-transform: uppercase; margin-bottom: 2px;">TEMA INVESTIGADO:</p>
-                        <p id="print-theme-display" style="font-size: 16px; font-weight: bold; color: #2563eb; border-bottom: 1px solid #cbd5e1; padding-bottom: 2px;">________</p>
-                    </div>
-
-                    <div style="margin-top: 30px; text-align: center;">
-                        <div style="width: 80px; height: 80px; border: 3px double #ef4444; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; transform: rotate(-10deg); color: #ef4444; font-weight: bold; font-size: 12px; border-style: double;">
-                            MISIÓN<br>CUMPLIDA
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Columna Derecha: Información Investigada -->
-                <div>
-                    <!-- Datos Generales -->
-                    <div style="margin-bottom: 20px; background: #f8fafc; padding: 10px; border-radius: 8px; border-left: 4px solid #3b82f6;">
-                        <p style="font-size: 12px; font-weight: bold; color: #1e3a8a; margin-bottom: 5px;">DATOS GENERALES:</p>
-                        <p id="print-general" style="font-size: 14px; color: #334155; margin: 0; min-height: 40px;">...</p>
-                    </div>
-
-                    <!-- Datos Curiosos -->
-                    <div style="margin-bottom: 20px;">
-                        <p style="font-size: 12px; font-weight: bold; color: #d97706; margin-bottom: 10px; text-transform: uppercase;">5 DATOS CURIOSOS:</p>
-                        <ul id="print-facts" style="list-style: none; padding: 0; margin: 0; font-size: 13px; color: #334155;">
-                            <li style="margin-bottom: 5px; border-bottom: 1px dotted #cbd5e1; padding-bottom: 2px;">1. </li>
-                            <li style="margin-bottom: 5px; border-bottom: 1px dotted #cbd5e1; padding-bottom: 2px;">2. </li>
-                            <li style="margin-bottom: 5px; border-bottom: 1px dotted #cbd5e1; padding-bottom: 2px;">3. </li>
-                            <li style="margin-bottom: 5px; border-bottom: 1px dotted #cbd5e1; padding-bottom: 2px;">4. </li>
-                            <li style="margin-bottom: 5px; border-bottom: 1px dotted #cbd5e1; padding-bottom: 2px;">5. </li>
-                        </ul>
-                    </div>
-
-                    <!-- Reflexión -->
-                    <div style="margin-bottom: 20px;">
-                        <p style="font-size: 12px; font-weight: bold; color: #059669; margin-bottom: 5px;">REFLEXIÓN FINAL:</p>
-                        <p id="print-reflection" style="font-size: 13px; color: #334155; font-style: italic; min-height: 40px;">...</p>
-                    </div>
-
-                    <!-- Puntaje -->
-                    <div style="text-align: right; font-size: 10px; color: #94a3b8; margin-top: 10px;">
-                        Puntaje Autoevaluación: <span id="print-score" style="font-weight: bold; color: #db2777;">0/14</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Pie de página -->
-            <div style="background: #f1f5f9; padding: 10px; text-align: center; border-top: 1px solid #cbd5e1; font-size: 10px; color: #64748b;">
-                WebQuest: "Viajeros del Texto" | Nivel Primaria
-            </div>
+            <p class="mt-6 text-xs text-slate-400">© 2024 WebQuest Educativa - Todos los derechos reservados</p>
         </div>
-    </div>
+    </footer>
 
-    <!-- Script Lógica -->
     <script>
         lucide.createIcons();
 
         let state = {
             theme: "",
-            score: 0,
-            uploadedImage: null
+            score: 0
         };
 
         // Navegación
@@ -626,41 +549,35 @@
             lucide.createIcons();
         }
 
-        // Selección de Tema
+        // Selección de Tema (Ahora solo visual)
         function selectTheme(themeName) {
             state.theme = themeName;
+            
             document.querySelectorAll('.theme-opt').forEach(btn => {
                 btn.classList.remove('ring-4', 'ring-green-400', 'ring-blue-400', 'ring-red-400');
                 btn.querySelector('.check-icon').style.opacity = '0';
             });
 
-            // Highlight chosen (si existe el botón en el DOM)
-            const prefix = themeName.split(' ')[0].toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // 'fenomenos'
-            const btnId = 'btn-theme-' + prefix;
-            const activeBtn = document.getElementById(btnId);
+            let btnId = 'btn-theme-animales';
+            if(themeName.includes('Fenómenos')) btnId = 'btn-theme-fenomenos';
+            if(themeName.includes('Inventos')) btnId = 'btn-theme-inventos';
             
+            const activeBtn = document.getElementById(btnId);
             if(activeBtn) {
-                let ring = 'ring-green-400';
-                if(themeName.includes('Fenómenos')) ring = 'ring-blue-400';
-                if(themeName.includes('Inventos')) ring = 'ring-red-400';
-                activeBtn.classList.add('ring-4', ring);
+                activeBtn.classList.add('ring-4', 'ring-green-400');
                 activeBtn.querySelector('.check-icon').style.opacity = '1';
             }
 
-            // Actualizar input en el editor
-            document.getElementById('input-theme').value = themeName;
+            // Actualizar el input readonly del pasaporte
+            document.getElementById('passport-theme').value = themeName;
             
-            // Confetti
             confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
         }
 
-        // Pasos (Checklist) - CORREGIDO
+        // Checklist
         function toggleStep(stepNum) {
             const card = document.getElementById('step-' + stepNum);
-            
-            // Alternar clase 'completed' en la tarjeta
             card.classList.toggle('completed');
-
             updateProgress();
         }
 
@@ -668,7 +585,6 @@
             const total = document.querySelectorAll('.step-card.completed').length;
             const percent = (total / 5) * 100;
             document.getElementById('progress-bar').style.width = percent + '%';
-            document.getElementById('progress-text').innerText = total + '/5 Pasos';
             if(total === 5) confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
         }
 
@@ -680,63 +596,9 @@
                 total += parseInt(r.getAttribute('data-points') || 0);
             });
             state.score = total;
-            document.getElementById('total-score').innerText = total;
-        }
-
-        // Subida de Imagen
-        function handleImageUpload(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    state.uploadedImage = e.target.result;
-                    document.getElementById('image-name').classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        // Imprimir Pasaporte
-        function printCertificate() {
-            // 1. Obtener valores del formulario
-            const name = document.getElementById('input-name').value || "....................";
-            const theme = document.getElementById('input-theme').value || "....................";
-            const general = document.getElementById('input-general').value || "(Sin datos generales)";
-            const reflection = document.getElementById('input-reflection').value || "(Sin reflexión)";
             
-            // 2. Asignar al área de impresión
-            document.getElementById('print-name').innerText = name;
-            document.getElementById('print-theme-display').innerText = theme;
-            document.getElementById('print-general').innerText = general;
-            document.getElementById('print-reflection').innerText = reflection;
-            document.getElementById('print-score').innerText = state.score + "/14";
-
-            // 3. Imagen
-            const imgEl = document.getElementById('print-img');
-            const placeholderEl = document.getElementById('print-img-placeholder');
-            if(state.uploadedImage) {
-                imgEl.src = state.uploadedImage;
-                imgEl.style.display = 'block';
-                placeholderEl.style.display = 'none';
-            } else {
-                imgEl.style.display = 'none';
-                placeholderEl.style.display = 'block';
-            }
-
-            // 4. Lista de Curiosidades
-            const factsList = document.getElementById('print-facts');
-            factsList.innerHTML = ''; // Limpiar
-            for(let i=1; i<=5; i++) {
-                const val = document.getElementById('fact-'+i).value;
-                const li = document.createElement('li');
-                li.style.marginBottom = "5px";
-                li.style.borderBottom = "1px dotted #cbd5e1";
-                li.innerText = i + ". " + (val || ".............................................");
-                factsList.appendChild(li);
-            }
-
-            // 5. Imprimir
-            setTimeout(() => window.print(), 300);
+            document.getElementById('total-score').innerText = total;
+            document.getElementById('display-score').innerText = total + "/14";
         }
     </script>
 </body>
